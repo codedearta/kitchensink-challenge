@@ -1,4 +1,4 @@
-This file is a merged representation of the entire codebase, combined into a single document by Repomix. The content has been processed where line numbers have been added, security check has been disabled.
+This file is a merged representation of a subset of the codebase, containing files not matching ignore patterns, combined into a single document by Repomix. The content has been processed where empty lines have been removed, line numbers have been added, security check has been disabled.
 
 # File Summary
 
@@ -13,8 +13,8 @@ The content is organized as follows:
 2. Repository information
 3. Directory structure
 4. Multiple file entries, each consisting of:
-  a. A header with the file path (## File: path/to/file)
-  b. The full contents of the file in a code block
+   a. A header with the file path (## File: path/to/file)
+   b. The full contents of the file in a code block
 
 ## Usage Guidelines
 - This file should be treated as read-only. Any changes should be made to the
@@ -27,8 +27,10 @@ The content is organized as follows:
 ## Notes
 - Some files may have been excluded based on .gitignore rules and Repomix's configuration
 - Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching these patterns are excluded: workflow/*
 - Files matching patterns in .gitignore are excluded
 - Files matching default ignore patterns are excluded
+- Empty lines have been removed from all files
 - Line numbers have been added to the beginning of each line
 - Security check has been disabled - content may contain sensitive information
 
@@ -36,71 +38,75 @@ The content is organized as follows:
 
 # Directory Structure
 ```
-charts/
-  helm.yaml
-src/
-  main/
-    java/
-      org/
-        jboss/
-          as/
-            quickstarts/
-              kitchensink/
-                controller/
-                  MemberController.java
-                data/
-                  MemberListProducer.java
-                  MemberRepository.java
-                model/
-                  Member.java
-                rest/
-                  JaxRsActivator.java
-                  MemberResourceRESTService.java
-                service/
-                  MemberRegistration.java
-                util/
-                  Resources.java
-    resources/
-      META-INF/
-        persistence.xml
-      import.sql
-    webapp/
+legacy/
+  charts/
+    helm.yaml
+  src/
+    main/
+      java/
+        org/
+          jboss/
+            as/
+              quickstarts/
+                kitchensink/
+                  controller/
+                    MemberController.java
+                  data/
+                    MemberListProducer.java
+                    MemberRepository.java
+                  model/
+                    Member.java
+                  rest/
+                    JaxRsActivator.java
+                    MemberResourceRESTService.java
+                  service/
+                    MemberRegistration.java
+                  util/
+                    Resources.java
       resources/
-        css/
-          screen.css
-      WEB-INF/
-        templates/
-          default.xhtml
-        beans.xml
-        faces-config.xml
-        kitchensink-quickstart-ds.xml
-      index.html
-      index.xhtml
-  test/
-    java/
-      org/
-        jboss/
-          as/
-            quickstarts/
-              kitchensink/
-                test/
-                  MemberRegistrationIT.java
-                  RemoteMemberRegistrationIT.java
-    resources/
-      META-INF/
-        test-persistence.xml
-      arquillian.xml
-      test-ds.xml
-.cheatsheet.xml
-pom.xml
-README-source.adoc
-README.adoc
-README.html
+        META-INF/
+          persistence.xml
+        import.sql
+      webapp/
+        resources/
+          css/
+            screen.css
+        WEB-INF/
+          templates/
+            default.xhtml
+          beans.xml
+          faces-config.xml
+          kitchensink-quickstart-ds.xml
+        index.html
+        index.xhtml
+    test/
+      java/
+        org/
+          jboss/
+            as/
+              quickstarts/
+                kitchensink/
+                  test/
+                    MemberRegistrationIT.java
+                    RemoteMemberRegistrationIT.java
+      resources/
+        META-INF/
+          test-persistence.xml
+        arquillian.xml
+        test-ds.xml
+  .cheatsheet.xml
+  pom.xml
+  README-source.adoc
+  README.adoc
+  README.html
+modern/
+  placeholder.txt
+readme.md
 ```
 
 # Files
 
-## File: charts/helm.yaml
+## File: legacy/charts/helm.yaml
 ```yaml
 1: build:
 2:   uri: https://github.com/jboss-developer/jboss-eap-quickstarts.git
@@ -110,7 +116,7 @@ README.html
 6:   replicas: 1
 ```
 
-## File: src/main/java/org/jboss/as/quickstarts/kitchensink/controller/MemberController.java
+## File: legacy/src/main/java/org/jboss/as/quickstarts/kitchensink/controller/MemberController.java
 ```java
  1: /*
  2:  * JBoss, Home of Professional Open Source
@@ -129,134 +135,65 @@ README.html
 15:  * limitations under the License.
 16:  */
 17: package org.jboss.as.quickstarts.kitchensink.controller;
-18: 
-19: import jakarta.annotation.PostConstruct;
-20: import jakarta.enterprise.inject.Model;
-21: import jakarta.enterprise.inject.Produces;
-22: import jakarta.faces.application.FacesMessage;
-23: import jakarta.faces.context.FacesContext;
-24: import jakarta.inject.Inject;
-25: import jakarta.inject.Named;
-26: 
-27: import org.jboss.as.quickstarts.kitchensink.model.Member;
-28: import org.jboss.as.quickstarts.kitchensink.service.MemberRegistration;
-29: 
-30: // The @Model stereotype is a convenience mechanism to make this a request-scoped bean that has an
-31: // EL name
-32: // Read more about the @Model stereotype in this FAQ:
-33: // http://www.cdi-spec.org/faq/#accordion6
-34: @Model
-35: public class MemberController {
-36: 
-37:     @Inject
-38:     private FacesContext facesContext;
-39: 
-40:     @Inject
-41:     private MemberRegistration memberRegistration;
-42: 
-43:     @Produces
-44:     @Named
-45:     private Member newMember;
-46: 
-47:     @PostConstruct
-48:     public void initNewMember() {
-49:         newMember = new Member();
-50:     }
-51: 
-52:     public void register() throws Exception {
-53:         try {
-54:             memberRegistration.register(newMember);
-55:             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, "Registered!", "Registration successful");
-56:             facesContext.addMessage(null, m);
-57:             initNewMember();
-58:         } catch (Exception e) {
-59:             String errorMessage = getRootErrorMessage(e);
-60:             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, "Registration unsuccessful");
-61:             facesContext.addMessage(null, m);
-62:         }
-63:     }
-64: 
-65:     private String getRootErrorMessage(Exception e) {
-66:         // Default to general error message that registration failed.
-67:         String errorMessage = "Registration failed. See server log for more information";
-68:         if (e == null) {
-69:             // This shouldn't happen, but return the default messages
-70:             return errorMessage;
-71:         }
-72: 
-73:         // Start with the exception and recurse to find the root cause
-74:         Throwable t = e;
-75:         while (t != null) {
-76:             // Get the message from the Throwable class instance
-77:             errorMessage = t.getLocalizedMessage();
-78:             t = t.getCause();
-79:         }
-80:         // This is the root cause message
-81:         return errorMessage;
-82:     }
-83: 
-84: }
-```
-
-## File: src/main/java/org/jboss/as/quickstarts/kitchensink/data/MemberListProducer.java
-```java
- 1: /*
- 2:  * JBoss, Home of Professional Open Source
- 3:  * Copyright 2015, Red Hat, Inc. and/or its affiliates, and individual
- 4:  * contributors by the @authors tag. See the copyright.txt in the
- 5:  * distribution for a full listing of individual contributors.
- 6:  *
- 7:  * Licensed under the Apache License, Version 2.0 (the "License");
- 8:  * you may not use this file except in compliance with the License.
- 9:  * You may obtain a copy of the License at
-10:  * http://www.apache.org/licenses/LICENSE-2.0
-11:  * Unless required by applicable law or agreed to in writing, software
-12:  * distributed under the License is distributed on an "AS IS" BASIS,
-13:  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-14:  * See the License for the specific language governing permissions and
-15:  * limitations under the License.
-16:  */
-17: package org.jboss.as.quickstarts.kitchensink.data;
-18: 
-19: import jakarta.annotation.PostConstruct;
-20: import jakarta.enterprise.context.RequestScoped;
-21: import jakarta.enterprise.event.Observes;
-22: import jakarta.enterprise.event.Reception;
-23: import jakarta.enterprise.inject.Produces;
-24: import jakarta.inject.Inject;
-25: import jakarta.inject.Named;
-26: import java.util.List;
-27: 
-28: import org.jboss.as.quickstarts.kitchensink.model.Member;
-29: 
-30: @RequestScoped
-31: public class MemberListProducer {
-32: 
+18: import jakarta.annotation.PostConstruct;
+19: import jakarta.enterprise.inject.Model;
+20: import jakarta.enterprise.inject.Produces;
+21: import jakarta.faces.application.FacesMessage;
+22: import jakarta.faces.context.FacesContext;
+23: import jakarta.inject.Inject;
+24: import jakarta.inject.Named;
+25: import org.jboss.as.quickstarts.kitchensink.model.Member;
+26: import org.jboss.as.quickstarts.kitchensink.service.MemberRegistration;
+27: // The @Model stereotype is a convenience mechanism to make this a request-scoped bean that has an
+28: // EL name
+29: // Read more about the @Model stereotype in this FAQ:
+30: // http://www.cdi-spec.org/faq/#accordion6
+31: @Model
+32: public class MemberController {
 33:     @Inject
-34:     private MemberRepository memberRepository;
-35: 
-36:     private List<Member> members;
-37: 
-38:     // @Named provides access the return value via the EL variable name "members" in the UI (e.g.
-39:     // Facelets or JSP view)
-40:     @Produces
-41:     @Named
-42:     public List<Member> getMembers() {
-43:         return members;
-44:     }
-45: 
-46:     public void onMemberListChanged(@Observes(notifyObserver = Reception.IF_EXISTS) final Member member) {
-47:         retrieveAllMembersOrderedByName();
-48:     }
-49: 
-50:     @PostConstruct
-51:     public void retrieveAllMembersOrderedByName() {
-52:         members = memberRepository.findAllOrderedByName();
-53:     }
-54: }
+34:     private FacesContext facesContext;
+35:     @Inject
+36:     private MemberRegistration memberRegistration;
+37:     @Produces
+38:     @Named
+39:     private Member newMember;
+40:     @PostConstruct
+41:     public void initNewMember() {
+42:         newMember = new Member();
+43:     }
+44:     public void register() throws Exception {
+45:         try {
+46:             memberRegistration.register(newMember);
+47:             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_INFO, "Registered!", "Registration successful");
+48:             facesContext.addMessage(null, m);
+49:             initNewMember();
+50:         } catch (Exception e) {
+51:             String errorMessage = getRootErrorMessage(e);
+52:             FacesMessage m = new FacesMessage(FacesMessage.SEVERITY_ERROR, errorMessage, "Registration unsuccessful");
+53:             facesContext.addMessage(null, m);
+54:         }
+55:     }
+56:     private String getRootErrorMessage(Exception e) {
+57:         // Default to general error message that registration failed.
+58:         String errorMessage = "Registration failed. See server log for more information";
+59:         if (e == null) {
+60:             // This shouldn't happen, but return the default messages
+61:             return errorMessage;
+62:         }
+63:         // Start with the exception and recurse to find the root cause
+64:         Throwable t = e;
+65:         while (t != null) {
+66:             // Get the message from the Throwable class instance
+67:             errorMessage = t.getLocalizedMessage();
+68:             t = t.getCause();
+69:         }
+70:         // This is the root cause message
+71:         return errorMessage;
+72:     }
+73: }
 ```
 
-## File: src/main/java/org/jboss/as/quickstarts/kitchensink/data/MemberRepository.java
+## File: legacy/src/main/java/org/jboss/as/quickstarts/kitchensink/data/MemberListProducer.java
 ```java
  1: /*
  2:  * JBoss, Home of Professional Open Source
@@ -275,52 +212,95 @@ README.html
 15:  * limitations under the License.
 16:  */
 17: package org.jboss.as.quickstarts.kitchensink.data;
-18: 
-19: import jakarta.enterprise.context.ApplicationScoped;
-20: import jakarta.inject.Inject;
-21: import jakarta.persistence.EntityManager;
-22: import jakarta.persistence.criteria.CriteriaBuilder;
-23: import jakarta.persistence.criteria.CriteriaQuery;
-24: import jakarta.persistence.criteria.Root;
+18: import jakarta.annotation.PostConstruct;
+19: import jakarta.enterprise.context.RequestScoped;
+20: import jakarta.enterprise.event.Observes;
+21: import jakarta.enterprise.event.Reception;
+22: import jakarta.enterprise.inject.Produces;
+23: import jakarta.inject.Inject;
+24: import jakarta.inject.Named;
 25: import java.util.List;
-26: 
-27: import org.jboss.as.quickstarts.kitchensink.model.Member;
-28: 
-29: @ApplicationScoped
-30: public class MemberRepository {
-31: 
-32:     @Inject
-33:     private EntityManager em;
-34: 
-35:     public Member findById(Long id) {
-36:         return em.find(Member.class, id);
-37:     }
-38: 
-39:     public Member findByEmail(String email) {
-40:         CriteriaBuilder cb = em.getCriteriaBuilder();
-41:         CriteriaQuery<Member> criteria = cb.createQuery(Member.class);
-42:         Root<Member> member = criteria.from(Member.class);
-43:         // Swap criteria statements if you would like to try out type-safe criteria queries, a new
-44:         // feature in JPA 2.0
-45:         // criteria.select(member).where(cb.equal(member.get(Member_.email), email));
-46:         criteria.select(member).where(cb.equal(member.get("email"), email));
-47:         return em.createQuery(criteria).getSingleResult();
-48:     }
-49: 
-50:     public List<Member> findAllOrderedByName() {
-51:         CriteriaBuilder cb = em.getCriteriaBuilder();
-52:         CriteriaQuery<Member> criteria = cb.createQuery(Member.class);
-53:         Root<Member> member = criteria.from(Member.class);
-54:         // Swap criteria statements if you would like to try out type-safe criteria queries, a new
-55:         // feature in JPA 2.0
-56:         // criteria.select(member).orderBy(cb.asc(member.get(Member_.name)));
-57:         criteria.select(member).orderBy(cb.asc(member.get("name")));
-58:         return em.createQuery(criteria).getResultList();
-59:     }
-60: }
+26: import org.jboss.as.quickstarts.kitchensink.model.Member;
+27: @RequestScoped
+28: public class MemberListProducer {
+29:     @Inject
+30:     private MemberRepository memberRepository;
+31:     private List<Member> members;
+32:     // @Named provides access the return value via the EL variable name "members" in the UI (e.g.
+33:     // Facelets or JSP view)
+34:     @Produces
+35:     @Named
+36:     public List<Member> getMembers() {
+37:         return members;
+38:     }
+39:     public void onMemberListChanged(@Observes(notifyObserver = Reception.IF_EXISTS) final Member member) {
+40:         retrieveAllMembersOrderedByName();
+41:     }
+42:     @PostConstruct
+43:     public void retrieveAllMembersOrderedByName() {
+44:         members = memberRepository.findAllOrderedByName();
+45:     }
+46: }
 ```
 
-## File: src/main/java/org/jboss/as/quickstarts/kitchensink/model/Member.java
+## File: legacy/src/main/java/org/jboss/as/quickstarts/kitchensink/data/MemberRepository.java
+```java
+ 1: /*
+ 2:  * JBoss, Home of Professional Open Source
+ 3:  * Copyright 2015, Red Hat, Inc. and/or its affiliates, and individual
+ 4:  * contributors by the @authors tag. See the copyright.txt in the
+ 5:  * distribution for a full listing of individual contributors.
+ 6:  *
+ 7:  * Licensed under the Apache License, Version 2.0 (the "License");
+ 8:  * you may not use this file except in compliance with the License.
+ 9:  * You may obtain a copy of the License at
+10:  * http://www.apache.org/licenses/LICENSE-2.0
+11:  * Unless required by applicable law or agreed to in writing, software
+12:  * distributed under the License is distributed on an "AS IS" BASIS,
+13:  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+14:  * See the License for the specific language governing permissions and
+15:  * limitations under the License.
+16:  */
+17: package org.jboss.as.quickstarts.kitchensink.data;
+18: import jakarta.enterprise.context.ApplicationScoped;
+19: import jakarta.inject.Inject;
+20: import jakarta.persistence.EntityManager;
+21: import jakarta.persistence.criteria.CriteriaBuilder;
+22: import jakarta.persistence.criteria.CriteriaQuery;
+23: import jakarta.persistence.criteria.Root;
+24: import java.util.List;
+25: import org.jboss.as.quickstarts.kitchensink.model.Member;
+26: @ApplicationScoped
+27: public class MemberRepository {
+28:     @Inject
+29:     private EntityManager em;
+30:     public Member findById(Long id) {
+31:         return em.find(Member.class, id);
+32:     }
+33:     public Member findByEmail(String email) {
+34:         CriteriaBuilder cb = em.getCriteriaBuilder();
+35:         CriteriaQuery<Member> criteria = cb.createQuery(Member.class);
+36:         Root<Member> member = criteria.from(Member.class);
+37:         // Swap criteria statements if you would like to try out type-safe criteria queries, a new
+38:         // feature in JPA 2.0
+39:         // criteria.select(member).where(cb.equal(member.get(Member_.email), email));
+40:         criteria.select(member).where(cb.equal(member.get("email"), email));
+41:         return em.createQuery(criteria).getSingleResult();
+42:     }
+43:     public List<Member> findAllOrderedByName() {
+44:         CriteriaBuilder cb = em.getCriteriaBuilder();
+45:         CriteriaQuery<Member> criteria = cb.createQuery(Member.class);
+46:         Root<Member> member = criteria.from(Member.class);
+47:         // Swap criteria statements if you would like to try out type-safe criteria queries, a new
+48:         // feature in JPA 2.0
+49:         // criteria.select(member).orderBy(cb.asc(member.get(Member_.name)));
+50:         criteria.select(member).orderBy(cb.asc(member.get("name")));
+51:         return em.createQuery(criteria).getResultList();
+52:     }
+53: }
+```
+
+## File: legacy/src/main/java/org/jboss/as/quickstarts/kitchensink/model/Member.java
 ```java
  1: /*
  2:  * JBoss, Home of Professional Open Source
@@ -339,85 +319,69 @@ README.html
 15:  * limitations under the License.
 16:  */
 17: package org.jboss.as.quickstarts.kitchensink.model;
-18: 
-19: import java.io.Serializable;
-20: 
-21: import jakarta.persistence.Column;
-22: import jakarta.persistence.Entity;
-23: import jakarta.persistence.GeneratedValue;
-24: import jakarta.persistence.Id;
-25: import jakarta.persistence.Table;
-26: import jakarta.persistence.UniqueConstraint;
-27: import jakarta.validation.constraints.Digits;
-28: import jakarta.validation.constraints.NotNull;
-29: import jakarta.validation.constraints.Pattern;
-30: import jakarta.validation.constraints.Size;
-31: import jakarta.xml.bind.annotation.XmlRootElement;
-32: 
-33: import jakarta.validation.constraints.Email;
-34: import jakarta.validation.constraints.NotEmpty;
-35: 
-36: @SuppressWarnings("serial")
-37: @Entity
-38: @XmlRootElement
-39: @Table(uniqueConstraints = @UniqueConstraint(columnNames = "email"))
-40: public class Member implements Serializable {
-41: 
-42:     @Id
-43:     @GeneratedValue
-44:     private Long id;
-45: 
-46:     @NotNull
-47:     @Size(min = 1, max = 25)
-48:     @Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
-49:     private String name;
-50: 
-51:     @NotNull
-52:     @NotEmpty
-53:     @Email
-54:     private String email;
-55: 
-56:     @NotNull
-57:     @Size(min = 10, max = 12)
-58:     @Digits(fraction = 0, integer = 12)
-59:     @Column(name = "phone_number")
-60:     private String phoneNumber;
-61: 
-62:     public Long getId() {
-63:         return id;
+18: import java.io.Serializable;
+19: import jakarta.persistence.Column;
+20: import jakarta.persistence.Entity;
+21: import jakarta.persistence.GeneratedValue;
+22: import jakarta.persistence.Id;
+23: import jakarta.persistence.Table;
+24: import jakarta.persistence.UniqueConstraint;
+25: import jakarta.validation.constraints.Digits;
+26: import jakarta.validation.constraints.NotNull;
+27: import jakarta.validation.constraints.Pattern;
+28: import jakarta.validation.constraints.Size;
+29: import jakarta.xml.bind.annotation.XmlRootElement;
+30: import jakarta.validation.constraints.Email;
+31: import jakarta.validation.constraints.NotEmpty;
+32: @SuppressWarnings("serial")
+33: @Entity
+34: @XmlRootElement
+35: @Table(uniqueConstraints = @UniqueConstraint(columnNames = "email"))
+36: public class Member implements Serializable {
+37:     @Id
+38:     @GeneratedValue
+39:     private Long id;
+40:     @NotNull
+41:     @Size(min = 1, max = 25)
+42:     @Pattern(regexp = "[^0-9]*", message = "Must not contain numbers")
+43:     private String name;
+44:     @NotNull
+45:     @NotEmpty
+46:     @Email
+47:     private String email;
+48:     @NotNull
+49:     @Size(min = 10, max = 12)
+50:     @Digits(fraction = 0, integer = 12)
+51:     @Column(name = "phone_number")
+52:     private String phoneNumber;
+53:     public Long getId() {
+54:         return id;
+55:     }
+56:     public void setId(Long id) {
+57:         this.id = id;
+58:     }
+59:     public String getName() {
+60:         return name;
+61:     }
+62:     public void setName(String name) {
+63:         this.name = name;
 64:     }
-65: 
-66:     public void setId(Long id) {
-67:         this.id = id;
-68:     }
-69: 
-70:     public String getName() {
-71:         return name;
-72:     }
-73: 
-74:     public void setName(String name) {
-75:         this.name = name;
+65:     public String getEmail() {
+66:         return email;
+67:     }
+68:     public void setEmail(String email) {
+69:         this.email = email;
+70:     }
+71:     public String getPhoneNumber() {
+72:         return phoneNumber;
+73:     }
+74:     public void setPhoneNumber(String phoneNumber) {
+75:         this.phoneNumber = phoneNumber;
 76:     }
-77: 
-78:     public String getEmail() {
-79:         return email;
-80:     }
-81: 
-82:     public void setEmail(String email) {
-83:         this.email = email;
-84:     }
-85: 
-86:     public String getPhoneNumber() {
-87:         return phoneNumber;
-88:     }
-89: 
-90:     public void setPhoneNumber(String phoneNumber) {
-91:         this.phoneNumber = phoneNumber;
-92:     }
-93: }
+77: }
 ```
 
-## File: src/main/java/org/jboss/as/quickstarts/kitchensink/rest/JaxRsActivator.java
+## File: legacy/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/JaxRsActivator.java
 ```java
  1: /*
  2:  * JBoss, Home of Professional Open Source
@@ -436,25 +400,23 @@ README.html
 15:  * limitations under the License.
 16:  */
 17: package org.jboss.as.quickstarts.kitchensink.rest;
-18: 
-19: import jakarta.ws.rs.ApplicationPath;
-20: import jakarta.ws.rs.core.Application;
-21: 
-22: /**
-23:  * A class extending {@link Application} and annotated with @ApplicationPath is the Jakarta EE "no XML" approach to activating
-24:  * JAX-RS.
-25:  * <p>
-26:  * <p>
-27:  * Resources are served relative to the servlet path specified in the {@link ApplicationPath} annotation.
-28:  * </p>
-29:  */
-30: @ApplicationPath("/rest")
-31: public class JaxRsActivator extends Application {
-32:     /* class body intentionally left blank */
-33: }
+18: import jakarta.ws.rs.ApplicationPath;
+19: import jakarta.ws.rs.core.Application;
+20: /**
+21:  * A class extending {@link Application} and annotated with @ApplicationPath is the Jakarta EE "no XML" approach to activating
+22:  * JAX-RS.
+23:  * <p>
+24:  * <p>
+25:  * Resources are served relative to the servlet path specified in the {@link ApplicationPath} annotation.
+26:  * </p>
+27:  */
+28: @ApplicationPath("/rest")
+29: public class JaxRsActivator extends Application {
+30:     /* class body intentionally left blank */
+31: }
 ```
 
-## File: src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java
+## File: legacy/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java
 ```java
   1: /*
   2:  * JBoss, Home of Professional Open Source
@@ -473,177 +435,153 @@ README.html
  15:  * limitations under the License.
  16:  */
  17: package org.jboss.as.quickstarts.kitchensink.rest;
- 18: 
- 19: import java.util.HashMap;
- 20: import java.util.HashSet;
- 21: import java.util.List;
- 22: import java.util.Map;
- 23: import java.util.Set;
- 24: import java.util.logging.Logger;
- 25: 
- 26: import jakarta.enterprise.context.RequestScoped;
- 27: import jakarta.inject.Inject;
- 28: import jakarta.persistence.NoResultException;
- 29: import jakarta.validation.ConstraintViolation;
- 30: import jakarta.validation.ConstraintViolationException;
- 31: import jakarta.validation.ValidationException;
- 32: import jakarta.validation.Validator;
- 33: import jakarta.ws.rs.Consumes;
- 34: import jakarta.ws.rs.GET;
- 35: import jakarta.ws.rs.POST;
- 36: import jakarta.ws.rs.Path;
- 37: import jakarta.ws.rs.PathParam;
- 38: import jakarta.ws.rs.Produces;
- 39: import jakarta.ws.rs.WebApplicationException;
- 40: import jakarta.ws.rs.core.MediaType;
- 41: import jakarta.ws.rs.core.Response;
- 42: 
- 43: import org.jboss.as.quickstarts.kitchensink.data.MemberRepository;
- 44: import org.jboss.as.quickstarts.kitchensink.model.Member;
- 45: import org.jboss.as.quickstarts.kitchensink.service.MemberRegistration;
- 46: 
- 47: /**
- 48:  * JAX-RS Example
- 49:  * <p/>
- 50:  * This class produces a RESTful service to read/write the contents of the members table.
- 51:  */
- 52: @Path("/members")
- 53: @RequestScoped
- 54: public class MemberResourceRESTService {
- 55: 
- 56:     @Inject
- 57:     private Logger log;
- 58: 
- 59:     @Inject
- 60:     private Validator validator;
- 61: 
- 62:     @Inject
- 63:     private MemberRepository repository;
- 64: 
- 65:     @Inject
- 66:     MemberRegistration registration;
- 67: 
- 68:     @GET
- 69:     @Produces(MediaType.APPLICATION_JSON)
- 70:     public List<Member> listAllMembers() {
- 71:         return repository.findAllOrderedByName();
- 72:     }
- 73: 
- 74:     @GET
- 75:     @Path("/{id:[0-9][0-9]*}")
- 76:     @Produces(MediaType.APPLICATION_JSON)
- 77:     public Member lookupMemberById(@PathParam("id") long id) {
- 78:         Member member = repository.findById(id);
- 79:         if (member == null) {
- 80:             throw new WebApplicationException(Response.Status.NOT_FOUND);
- 81:         }
- 82:         return member;
- 83:     }
- 84: 
- 85:     /**
- 86:      * Creates a new member from the values provided. Performs validation, and will return a JAX-RS response with either 200 ok,
- 87:      * or with a map of fields, and related errors.
- 88:      */
- 89:     @POST
- 90:     @Consumes(MediaType.APPLICATION_JSON)
- 91:     @Produces(MediaType.APPLICATION_JSON)
- 92:     public Response createMember(Member member) {
- 93: 
- 94:         Response.ResponseBuilder builder = null;
- 95: 
- 96:         try {
- 97:             // Validates member using bean validation
- 98:             validateMember(member);
- 99: 
-100:             registration.register(member);
-101: 
-102:             // Create an "ok" response
-103:             builder = Response.ok();
-104:         } catch (ConstraintViolationException ce) {
-105:             // Handle bean validation issues
-106:             builder = createViolationResponse(ce.getConstraintViolations());
-107:         } catch (ValidationException e) {
-108:             // Handle the unique constrain violation
-109:             Map<String, String> responseObj = new HashMap<>();
-110:             responseObj.put("email", "Email taken");
-111:             builder = Response.status(Response.Status.CONFLICT).entity(responseObj);
-112:         } catch (Exception e) {
-113:             // Handle generic exceptions
-114:             Map<String, String> responseObj = new HashMap<>();
-115:             responseObj.put("error", e.getMessage());
-116:             builder = Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
-117:         }
-118: 
-119:         return builder.build();
-120:     }
-121: 
-122:     /**
-123:      * <p>
-124:      * Validates the given Member variable and throws validation exceptions based on the type of error. If the error is standard
-125:      * bean validation errors then it will throw a ConstraintValidationException with the set of the constraints violated.
-126:      * </p>
-127:      * <p>
-128:      * If the error is caused because an existing member with the same email is registered it throws a regular validation
-129:      * exception so that it can be interpreted separately.
-130:      * </p>
-131:      *
-132:      * @param member Member to be validated
-133:      * @throws ConstraintViolationException If Bean Validation errors exist
-134:      * @throws ValidationException If member with the same email already exists
-135:      */
-136:     private void validateMember(Member member) throws ConstraintViolationException, ValidationException {
-137:         // Create a bean validator and check for issues.
-138:         Set<ConstraintViolation<Member>> violations = validator.validate(member);
-139: 
-140:         if (!violations.isEmpty()) {
-141:             throw new ConstraintViolationException(new HashSet<>(violations));
+ 18: import java.util.HashMap;
+ 19: import java.util.HashSet;
+ 20: import java.util.List;
+ 21: import java.util.Map;
+ 22: import java.util.Set;
+ 23: import java.util.logging.Logger;
+ 24: import jakarta.enterprise.context.RequestScoped;
+ 25: import jakarta.inject.Inject;
+ 26: import jakarta.persistence.NoResultException;
+ 27: import jakarta.validation.ConstraintViolation;
+ 28: import jakarta.validation.ConstraintViolationException;
+ 29: import jakarta.validation.ValidationException;
+ 30: import jakarta.validation.Validator;
+ 31: import jakarta.ws.rs.Consumes;
+ 32: import jakarta.ws.rs.GET;
+ 33: import jakarta.ws.rs.POST;
+ 34: import jakarta.ws.rs.Path;
+ 35: import jakarta.ws.rs.PathParam;
+ 36: import jakarta.ws.rs.Produces;
+ 37: import jakarta.ws.rs.WebApplicationException;
+ 38: import jakarta.ws.rs.core.MediaType;
+ 39: import jakarta.ws.rs.core.Response;
+ 40: import org.jboss.as.quickstarts.kitchensink.data.MemberRepository;
+ 41: import org.jboss.as.quickstarts.kitchensink.model.Member;
+ 42: import org.jboss.as.quickstarts.kitchensink.service.MemberRegistration;
+ 43: /**
+ 44:  * JAX-RS Example
+ 45:  * <p/>
+ 46:  * This class produces a RESTful service to read/write the contents of the members table.
+ 47:  */
+ 48: @Path("/members")
+ 49: @RequestScoped
+ 50: public class MemberResourceRESTService {
+ 51:     @Inject
+ 52:     private Logger log;
+ 53:     @Inject
+ 54:     private Validator validator;
+ 55:     @Inject
+ 56:     private MemberRepository repository;
+ 57:     @Inject
+ 58:     MemberRegistration registration;
+ 59:     @GET
+ 60:     @Produces(MediaType.APPLICATION_JSON)
+ 61:     public List<Member> listAllMembers() {
+ 62:         return repository.findAllOrderedByName();
+ 63:     }
+ 64:     @GET
+ 65:     @Path("/{id:[0-9][0-9]*}")
+ 66:     @Produces(MediaType.APPLICATION_JSON)
+ 67:     public Member lookupMemberById(@PathParam("id") long id) {
+ 68:         Member member = repository.findById(id);
+ 69:         if (member == null) {
+ 70:             throw new WebApplicationException(Response.Status.NOT_FOUND);
+ 71:         }
+ 72:         return member;
+ 73:     }
+ 74:     /**
+ 75:      * Creates a new member from the values provided. Performs validation, and will return a JAX-RS response with either 200 ok,
+ 76:      * or with a map of fields, and related errors.
+ 77:      */
+ 78:     @POST
+ 79:     @Consumes(MediaType.APPLICATION_JSON)
+ 80:     @Produces(MediaType.APPLICATION_JSON)
+ 81:     public Response createMember(Member member) {
+ 82:         Response.ResponseBuilder builder = null;
+ 83:         try {
+ 84:             // Validates member using bean validation
+ 85:             validateMember(member);
+ 86:             registration.register(member);
+ 87:             // Create an "ok" response
+ 88:             builder = Response.ok();
+ 89:         } catch (ConstraintViolationException ce) {
+ 90:             // Handle bean validation issues
+ 91:             builder = createViolationResponse(ce.getConstraintViolations());
+ 92:         } catch (ValidationException e) {
+ 93:             // Handle the unique constrain violation
+ 94:             Map<String, String> responseObj = new HashMap<>();
+ 95:             responseObj.put("email", "Email taken");
+ 96:             builder = Response.status(Response.Status.CONFLICT).entity(responseObj);
+ 97:         } catch (Exception e) {
+ 98:             // Handle generic exceptions
+ 99:             Map<String, String> responseObj = new HashMap<>();
+100:             responseObj.put("error", e.getMessage());
+101:             builder = Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
+102:         }
+103:         return builder.build();
+104:     }
+105:     /**
+106:      * <p>
+107:      * Validates the given Member variable and throws validation exceptions based on the type of error. If the error is standard
+108:      * bean validation errors then it will throw a ConstraintValidationException with the set of the constraints violated.
+109:      * </p>
+110:      * <p>
+111:      * If the error is caused because an existing member with the same email is registered it throws a regular validation
+112:      * exception so that it can be interpreted separately.
+113:      * </p>
+114:      *
+115:      * @param member Member to be validated
+116:      * @throws ConstraintViolationException If Bean Validation errors exist
+117:      * @throws ValidationException If member with the same email already exists
+118:      */
+119:     private void validateMember(Member member) throws ConstraintViolationException, ValidationException {
+120:         // Create a bean validator and check for issues.
+121:         Set<ConstraintViolation<Member>> violations = validator.validate(member);
+122:         if (!violations.isEmpty()) {
+123:             throw new ConstraintViolationException(new HashSet<>(violations));
+124:         }
+125:         // Check the uniqueness of the email address
+126:         if (emailAlreadyExists(member.getEmail())) {
+127:             throw new ValidationException("Unique Email Violation");
+128:         }
+129:     }
+130:     /**
+131:      * Creates a JAX-RS "Bad Request" response including a map of all violation fields, and their message. This can then be used
+132:      * by clients to show violations.
+133:      *
+134:      * @param violations A set of violations that needs to be reported
+135:      * @return JAX-RS response containing all violations
+136:      */
+137:     private Response.ResponseBuilder createViolationResponse(Set<ConstraintViolation<?>> violations) {
+138:         log.fine("Validation completed. violations found: " + violations.size());
+139:         Map<String, String> responseObj = new HashMap<>();
+140:         for (ConstraintViolation<?> violation : violations) {
+141:             responseObj.put(violation.getPropertyPath().toString(), violation.getMessage());
 142:         }
-143: 
-144:         // Check the uniqueness of the email address
-145:         if (emailAlreadyExists(member.getEmail())) {
-146:             throw new ValidationException("Unique Email Violation");
-147:         }
-148:     }
-149: 
-150:     /**
-151:      * Creates a JAX-RS "Bad Request" response including a map of all violation fields, and their message. This can then be used
-152:      * by clients to show violations.
-153:      *
-154:      * @param violations A set of violations that needs to be reported
-155:      * @return JAX-RS response containing all violations
-156:      */
-157:     private Response.ResponseBuilder createViolationResponse(Set<ConstraintViolation<?>> violations) {
-158:         log.fine("Validation completed. violations found: " + violations.size());
-159: 
-160:         Map<String, String> responseObj = new HashMap<>();
-161: 
-162:         for (ConstraintViolation<?> violation : violations) {
-163:             responseObj.put(violation.getPropertyPath().toString(), violation.getMessage());
-164:         }
-165: 
-166:         return Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
-167:     }
-168: 
-169:     /**
-170:      * Checks if a member with the same email address is already registered. This is the only way to easily capture the
-171:      * "@UniqueConstraint(columnNames = "email")" constraint from the Member class.
-172:      *
-173:      * @param email The email to check
-174:      * @return True if the email already exists, and false otherwise
-175:      */
-176:     public boolean emailAlreadyExists(String email) {
-177:         Member member = null;
-178:         try {
-179:             member = repository.findByEmail(email);
-180:         } catch (NoResultException e) {
-181:             // ignore
-182:         }
-183:         return member != null;
-184:     }
-185: }
+143:         return Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
+144:     }
+145:     /**
+146:      * Checks if a member with the same email address is already registered. This is the only way to easily capture the
+147:      * "@UniqueConstraint(columnNames = "email")" constraint from the Member class.
+148:      *
+149:      * @param email The email to check
+150:      * @return True if the email already exists, and false otherwise
+151:      */
+152:     public boolean emailAlreadyExists(String email) {
+153:         Member member = null;
+154:         try {
+155:             member = repository.findByEmail(email);
+156:         } catch (NoResultException e) {
+157:             // ignore
+158:         }
+159:         return member != null;
+160:     }
+161: }
 ```
 
-## File: src/main/java/org/jboss/as/quickstarts/kitchensink/service/MemberRegistration.java
+## File: legacy/src/main/java/org/jboss/as/quickstarts/kitchensink/service/MemberRegistration.java
 ```java
  1: /*
  2:  * JBoss, Home of Professional Open Source
@@ -662,37 +600,30 @@ README.html
 15:  * limitations under the License.
 16:  */
 17: package org.jboss.as.quickstarts.kitchensink.service;
-18: 
-19: import org.jboss.as.quickstarts.kitchensink.model.Member;
-20: 
-21: import jakarta.ejb.Stateless;
-22: import jakarta.enterprise.event.Event;
-23: import jakarta.inject.Inject;
-24: import jakarta.persistence.EntityManager;
-25: import java.util.logging.Logger;
-26: 
-27: // The @Stateless annotation eliminates the need for manual transaction demarcation
-28: @Stateless
-29: public class MemberRegistration {
-30: 
+18: import org.jboss.as.quickstarts.kitchensink.model.Member;
+19: import jakarta.ejb.Stateless;
+20: import jakarta.enterprise.event.Event;
+21: import jakarta.inject.Inject;
+22: import jakarta.persistence.EntityManager;
+23: import java.util.logging.Logger;
+24: // The @Stateless annotation eliminates the need for manual transaction demarcation
+25: @Stateless
+26: public class MemberRegistration {
+27:     @Inject
+28:     private Logger log;
+29:     @Inject
+30:     private EntityManager em;
 31:     @Inject
-32:     private Logger log;
-33: 
-34:     @Inject
-35:     private EntityManager em;
-36: 
-37:     @Inject
-38:     private Event<Member> memberEventSrc;
-39: 
-40:     public void register(Member member) throws Exception {
-41:         log.info("Registering " + member.getName());
-42:         em.persist(member);
-43:         memberEventSrc.fire(member);
-44:     }
-45: }
+32:     private Event<Member> memberEventSrc;
+33:     public void register(Member member) throws Exception {
+34:         log.info("Registering " + member.getName());
+35:         em.persist(member);
+36:         memberEventSrc.fire(member);
+37:     }
+38: }
 ```
 
-## File: src/main/java/org/jboss/as/quickstarts/kitchensink/util/Resources.java
+## File: legacy/src/main/java/org/jboss/as/quickstarts/kitchensink/util/Resources.java
 ```java
  1: /*
  2:  * JBoss, Home of Professional Open Source
@@ -711,40 +642,35 @@ README.html
 15:  * limitations under the License.
 16:  */
 17: package org.jboss.as.quickstarts.kitchensink.util;
-18: 
-19: import java.util.logging.Logger;
-20: 
-21: import jakarta.enterprise.inject.Produces;
-22: import jakarta.enterprise.inject.spi.InjectionPoint;
-23: import jakarta.persistence.EntityManager;
-24: import jakarta.persistence.PersistenceContext;
-25: 
-26: /**
-27:  * This class uses CDI to alias Jakarta EE resources, such as the persistence context, to CDI beans
-28:  *
-29:  * <p>
-30:  * Example injection on a managed bean field:
-31:  * </p>
-32:  *
-33:  * <pre>
-34:  * &#064;Inject
-35:  * private EntityManager em;
-36:  * </pre>
-37:  */
-38: public class Resources {
+18: import java.util.logging.Logger;
+19: import jakarta.enterprise.inject.Produces;
+20: import jakarta.enterprise.inject.spi.InjectionPoint;
+21: import jakarta.persistence.EntityManager;
+22: import jakarta.persistence.PersistenceContext;
+23: /**
+24:  * This class uses CDI to alias Jakarta EE resources, such as the persistence context, to CDI beans
+25:  *
+26:  * <p>
+27:  * Example injection on a managed bean field:
+28:  * </p>
+29:  *
+30:  * <pre>
+31:  * &#064;Inject
+32:  * private EntityManager em;
+33:  * </pre>
+34:  */
+35: public class Resources {
+36:     @Produces
+37:     @PersistenceContext
+38:     private EntityManager em;
 39:     @Produces
-40:     @PersistenceContext
-41:     private EntityManager em;
-42: 
-43:     @Produces
-44:     public Logger produceLog(InjectionPoint injectionPoint) {
-45:         return Logger.getLogger(injectionPoint.getMember().getDeclaringClass().getName());
-46:     }
-47: 
-48: }
+40:     public Logger produceLog(InjectionPoint injectionPoint) {
+41:         return Logger.getLogger(injectionPoint.getMember().getDeclaringClass().getName());
+42:     }
+43: }
 ```
 
-## File: src/main/resources/META-INF/persistence.xml
+## File: legacy/src/main/resources/META-INF/persistence.xml
 ```xml
  1: <?xml version="1.0" encoding="UTF-8"?>
  2: <!--
@@ -752,38 +678,37 @@ README.html
  4:     Copyright 2015, Red Hat, Inc. and/or its affiliates, and individual
  5:     contributors by the @authors tag. See the copyright.txt in the
  6:     distribution for a full listing of individual contributors.
- 7: 
- 8:     Licensed under the Apache License, Version 2.0 (the "License");
- 9:     you may not use this file except in compliance with the License.
-10:     You may obtain a copy of the License at
-11:     http://www.apache.org/licenses/LICENSE-2.0
-12:     Unless required by applicable law or agreed to in writing, software
-13:     distributed under the License is distributed on an "AS IS" BASIS,
-14:     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-15:     See the License for the specific language governing permissions and
-16:     limitations under the License.
-17: -->
-18: <persistence xmlns="https://jakarta.ee/xml/ns/persistence"
-19:              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-20:              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
-21:                                  https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
-22:              version="3.0">
-23:    <persistence-unit name="primary">
-24:       <!-- If you are running in a production environment, add a managed
-25:          data source, this example data source is just for development and testing! -->
-26:       <!-- The datasource is deployed as WEB-INF/kitchensink-quickstart-ds.xml, you
-27:          can find it in the source at src/main/webapp/WEB-INF/kitchensink-quickstart-ds.xml -->
-28:       <jta-data-source>java:jboss/datasources/KitchensinkQuickstartDS</jta-data-source>
-29:       <properties>
-30:          <!-- Properties for Hibernate -->
-31:          <property name="hibernate.hbm2ddl.auto" value="create-drop" />
-32:          <property name="hibernate.show_sql" value="false" />
-33:       </properties>
-34:    </persistence-unit>
-35: </persistence>
+ 7:     Licensed under the Apache License, Version 2.0 (the "License");
+ 8:     you may not use this file except in compliance with the License.
+ 9:     You may obtain a copy of the License at
+10:     http://www.apache.org/licenses/LICENSE-2.0
+11:     Unless required by applicable law or agreed to in writing, software
+12:     distributed under the License is distributed on an "AS IS" BASIS,
+13:     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+14:     See the License for the specific language governing permissions and
+15:     limitations under the License.
+16: -->
+17: <persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+18:              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+19:              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+20:                                  https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+21:              version="3.0">
+22:    <persistence-unit name="primary">
+23:       <!-- If you are running in a production environment, add a managed
+24:          data source, this example data source is just for development and testing! -->
+25:       <!-- The datasource is deployed as WEB-INF/kitchensink-quickstart-ds.xml, you
+26:          can find it in the source at src/main/webapp/WEB-INF/kitchensink-quickstart-ds.xml -->
+27:       <jta-data-source>java:jboss/datasources/KitchensinkQuickstartDS</jta-data-source>
+28:       <properties>
+29:          <!-- Properties for Hibernate -->
+30:          <property name="hibernate.hbm2ddl.auto" value="create-drop" />
+31:          <property name="hibernate.show_sql" value="false" />
+32:       </properties>
+33:    </persistence-unit>
+34: </persistence>
 ```
 
-## File: src/main/resources/import.sql
+## File: legacy/src/main/resources/import.sql
 ```sql
  1: --
  2: -- JBoss, Home of Professional Open Source
@@ -801,12 +726,11 @@ README.html
 14: -- See the License for the specific language governing permissions and
 15: -- limitations under the License.
 16: --
-17: 
-18: -- You can use this file to load seed data into the database using SQL statements
-19: insert into Member (id, name, email, phone_number) values (0, 'John Smith', 'john.smith@mailinator.com', '2125551212')
+17: -- You can use this file to load seed data into the database using SQL statements
+18: insert into Member (id, name, email, phone_number) values (0, 'John Smith', 'john.smith@mailinator.com', '2125551212')
 ```
 
-## File: src/main/webapp/resources/css/screen.css
+## File: legacy/src/main/webapp/resources/css/screen.css
 ```css
   1: /*
   2:  * JBoss, Home of Professional Open Source
@@ -833,186 +757,169 @@ README.html
  23:   font-size: 0.8em;
  24:   color:#363636;
  25: }
- 26: 
- 27: #container {
- 28:   margin: 0 auto;
- 29:   padding: 0 20px 10px 20px;
- 30:   border-top: 5px solid #000000;
- 31:   border-left: 5px solid #8c8f91;
- 32:   border-right: 5px solid #8c8f91;
- 33:   border-bottom: 25px solid #8c8f91;
- 34:   width: 865px; /* subtract 40px from banner width for padding */
- 35:   background: #FFFFFF;
- 36:   background-image: url(#{request.contextPath}/resources/gfx/headerbkg.png);
- 37:   background-repeat: repeat-x;
- 38:   padding-top: 30px;
- 39:   box-shadow: 3px 3px 15px #d5d5d5;
- 40: }
- 41: #content {
- 42:   float: left;
- 43:   width: 500px;
- 44:   margin: 20px;
- 45: }
- 46: #aside {
- 47:   font-size: 0.9em;
- 48:   width: 275px;
- 49:   float: left;
- 50:   margin: 20px 0px;
- 51:   border: 1px solid #D5D5D5;
- 52:   background: #F1F1F1;
- 53:   background-image: url(#{request.contextPath}/resources/gfx/asidebkg.png);
- 54:   background-repeat: repeat-x;
- 55:   padding: 20px;
- 56: }
- 57: 
- 58: #aside ul {
- 59:   padding-left: 30px;
- 60: }
- 61: .dualbrand {
- 62:   float: right;
- 63:   padding-right: 10px;
- 64: }
- 65: #footer {
- 66:   clear: both;
- 67:   text-align: center;
- 68:   color: #666666;
- 69:   font-size: 0.85em;
- 70: }
- 71: code {
- 72:   font-size: 1.1em;
- 73: }
- 74: a {
- 75:   color: #4a5d75;
- 76:   text-decoration: none;
- 77: }
- 78: a:hover {
- 79:   color: #369;
- 80:   text-decoration: underline;
- 81: }
- 82: h1 {
- 83:   color:#243446;
- 84:   font-size: 2.25em;
- 85: }
- 86: h2 {
- 87:   font-size: 1em;
- 88: }
- 89: h3 {
- 90:   color:#243446;
+ 26: #container {
+ 27:   margin: 0 auto;
+ 28:   padding: 0 20px 10px 20px;
+ 29:   border-top: 5px solid #000000;
+ 30:   border-left: 5px solid #8c8f91;
+ 31:   border-right: 5px solid #8c8f91;
+ 32:   border-bottom: 25px solid #8c8f91;
+ 33:   width: 865px; /* subtract 40px from banner width for padding */
+ 34:   background: #FFFFFF;
+ 35:   background-image: url(#{request.contextPath}/resources/gfx/headerbkg.png);
+ 36:   background-repeat: repeat-x;
+ 37:   padding-top: 30px;
+ 38:   box-shadow: 3px 3px 15px #d5d5d5;
+ 39: }
+ 40: #content {
+ 41:   float: left;
+ 42:   width: 500px;
+ 43:   margin: 20px;
+ 44: }
+ 45: #aside {
+ 46:   font-size: 0.9em;
+ 47:   width: 275px;
+ 48:   float: left;
+ 49:   margin: 20px 0px;
+ 50:   border: 1px solid #D5D5D5;
+ 51:   background: #F1F1F1;
+ 52:   background-image: url(#{request.contextPath}/resources/gfx/asidebkg.png);
+ 53:   background-repeat: repeat-x;
+ 54:   padding: 20px;
+ 55: }
+ 56: #aside ul {
+ 57:   padding-left: 30px;
+ 58: }
+ 59: .dualbrand {
+ 60:   float: right;
+ 61:   padding-right: 10px;
+ 62: }
+ 63: #footer {
+ 64:   clear: both;
+ 65:   text-align: center;
+ 66:   color: #666666;
+ 67:   font-size: 0.85em;
+ 68: }
+ 69: code {
+ 70:   font-size: 1.1em;
+ 71: }
+ 72: a {
+ 73:   color: #4a5d75;
+ 74:   text-decoration: none;
+ 75: }
+ 76: a:hover {
+ 77:   color: #369;
+ 78:   text-decoration: underline;
+ 79: }
+ 80: h1 {
+ 81:   color:#243446;
+ 82:   font-size: 2.25em;
+ 83: }
+ 84: h2 {
+ 85:   font-size: 1em;
+ 86: }
+ 87: h3 {
+ 88:   color:#243446;
+ 89: }
+ 90: h4 {
  91: }
- 92: h4 {
+ 92: h5 {
  93: }
- 94: h5 {
+ 94: h6 {
  95: }
- 96: h6 {
- 97: }
- 98: /* Member registration styles */
- 99: span.invalid {
-100:   padding-left: 3px;
-101:   color: red;
-102: }
-103: form {
-104:   padding: 1em;
-105:   font: 80%/1 sans-serif;
-106:   width: 375px;
-107:   border: 1px solid #D5D5D5;
-108: }
-109: label {
-110:   float: left;
-111:   width: 15%;
-112:   margin-left: 20px;
-113:   margin-right: 0.5em;
-114:   padding-top: 0.2em;
-115:   text-align: right;
-116:   font-weight: bold;
-117:   color:#363636;
-118: }
-119: input {
-120:   margin-bottom: 8px;
-121: }
-122: .register {
-123:   float: left;
-124:   margin-left: 85px;
-125: }
-126: 
-127: /*  -----  table style  -------  */
-128: 
-129: 
-130: /*  = Simple Table style (black header, grey/white stripes  */
-131: 
-132: .simpletablestyle {
-133:   background-color:#E6E7E8;
-134:   clear:both;
-135:   width: 550px;
-136: }
-137: 
-138: .simpletablestyle img {
-139:   border:0px;
-140: }
-141: 
-142: .simpletablestyle td {
-143:   height:2em;
-144:   padding-left: 6px;
-145:   font-size:11px;
-146:   padding:5px 5px;
-147: }
-148: 
-149: .simpletablestyle th {
-150: 	background: url(#{request.contextPath}/resources/gfx/bkg-blkheader.png) black repeat-x top left;
-151:   font-size:12px;
-152:   font-weight:normal;
-153:   padding:0 10px 0 5px;
-154:   border-bottom:#999999 dotted 1px;
-155: }
-156: 
-157: .simpletablestyle thead {
-158:   background: url(#{request.contextPath}/resources/gfx/bkg-blkheader.png) black repeat-x top left;
-159:   height:31px;
-160:   font-size:10px;
-161:   font-weight:bold;
-162:   color:#FFFFFF;
-163:   text-align:left;
+ 96: /* Member registration styles */
+ 97: span.invalid {
+ 98:   padding-left: 3px;
+ 99:   color: red;
+100: }
+101: form {
+102:   padding: 1em;
+103:   font: 80%/1 sans-serif;
+104:   width: 375px;
+105:   border: 1px solid #D5D5D5;
+106: }
+107: label {
+108:   float: left;
+109:   width: 15%;
+110:   margin-left: 20px;
+111:   margin-right: 0.5em;
+112:   padding-top: 0.2em;
+113:   text-align: right;
+114:   font-weight: bold;
+115:   color:#363636;
+116: }
+117: input {
+118:   margin-bottom: 8px;
+119: }
+120: .register {
+121:   float: left;
+122:   margin-left: 85px;
+123: }
+124: /*  -----  table style  -------  */
+125: /*  = Simple Table style (black header, grey/white stripes  */
+126: .simpletablestyle {
+127:   background-color:#E6E7E8;
+128:   clear:both;
+129:   width: 550px;
+130: }
+131: .simpletablestyle img {
+132:   border:0px;
+133: }
+134: .simpletablestyle td {
+135:   height:2em;
+136:   padding-left: 6px;
+137:   font-size:11px;
+138:   padding:5px 5px;
+139: }
+140: .simpletablestyle th {
+141: 	background: url(#{request.contextPath}/resources/gfx/bkg-blkheader.png) black repeat-x top left;
+142:   font-size:12px;
+143:   font-weight:normal;
+144:   padding:0 10px 0 5px;
+145:   border-bottom:#999999 dotted 1px;
+146: }
+147: .simpletablestyle thead {
+148:   background: url(#{request.contextPath}/resources/gfx/bkg-blkheader.png) black repeat-x top left;
+149:   height:31px;
+150:   font-size:10px;
+151:   font-weight:bold;
+152:   color:#FFFFFF;
+153:   text-align:left;
+154: }
+155: .simpletablestyle .header a {
+156:   color:#94aebd;
+157: }
+158: .simpletablestype tfoot {
+159: 	height: 20px;
+160:   font-size: 10px;
+161:   font-weight: bold;
+162:   background-color: #EAECEE;
+163:   text-align: center;
 164: }
-165: 
-166: .simpletablestyle .header a {
-167:   color:#94aebd;
-168: }
-169: 
-170: .simpletablestype tfoot {
-171: 	height: 20px;
-172:   font-size: 10px;
-173:   font-weight: bold;
-174:   background-color: #EAECEE;
-175:   text-align: center;
-176: }
-177: 
-178: .simpletablestyle tr.header td {
-179:   padding: 0px 10px 0px 5px;
-180: }
-181: 
-182: 
-183: .simpletablestyle .subheader {
-184:   background-color: #e6e7e8;
-185:   font-size:10px;
-186:   font-weight:bold;
-187:   color:#000000;
-188:   text-align:left;
-189: }
-190: 
-191: /* Using new CSS3 selectors for styling*/
-192: .simpletablestyle tr:nth-child(odd) {
-193:   background: #f4f3f3;
-194: }
-195: .simpletablestyle tr:nth-child(even) {
-196:   background: #ffffff;
-197: }
-198: 
-199: .simpletablestyle td a:hover {
-200:   color:#3883ce;
-201:   text-decoration:none; 
-202: }
+165: .simpletablestyle tr.header td {
+166:   padding: 0px 10px 0px 5px;
+167: }
+168: .simpletablestyle .subheader {
+169:   background-color: #e6e7e8;
+170:   font-size:10px;
+171:   font-weight:bold;
+172:   color:#000000;
+173:   text-align:left;
+174: }
+175: /* Using new CSS3 selectors for styling*/
+176: .simpletablestyle tr:nth-child(odd) {
+177:   background: #f4f3f3;
+178: }
+179: .simpletablestyle tr:nth-child(even) {
+180:   background: #ffffff;
+181: }
+182: .simpletablestyle td a:hover {
+183:   color:#3883ce;
+184:   text-decoration:none; 
+185: }
 ```
 
-## File: src/main/webapp/WEB-INF/templates/default.xhtml
+## File: legacy/src/main/webapp/WEB-INF/templates/default.xhtml
 ```
  1: <!--
  2:     JBoss, Home of Professional Open Source
@@ -1068,7 +975,7 @@ README.html
 52: </html>
 ```
 
-## File: src/main/webapp/WEB-INF/beans.xml
+## File: legacy/src/main/webapp/WEB-INF/beans.xml
 ```xml
  1: <?xml version="1.0" encoding="UTF-8"?>
  2: <!--
@@ -1076,110 +983,6 @@ README.html
  4:     Copyright 2015, Red Hat, Inc. and/or its affiliates, and individual
  5:     contributors by the @authors tag. See the copyright.txt in the
  6:     distribution for a full listing of individual contributors.
- 7: 
- 8:     Licensed under the Apache License, Version 2.0 (the "License");
- 9:     you may not use this file except in compliance with the License.
-10:     You may obtain a copy of the License at
-11:     http://www.apache.org/licenses/LICENSE-2.0
-12:     Unless required by applicable law or agreed to in writing, software
-13:     distributed under the License is distributed on an "AS IS" BASIS,
-14:     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-15:     See the License for the specific language governing permissions and
-16:     limitations under the License.
-17: -->
-18: <!-- Marker file indicating CDI should be enabled -->
-19: <beans xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-20:     xsi:schemaLocation="
-21:       http://xmlns.jcp.org/xml/ns/javaee
-22:       http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd"
-23:     bean-discovery-mode="all">
-24: </beans>
-```
-
-## File: src/main/webapp/WEB-INF/faces-config.xml
-```xml
- 1: <?xml version="1.0"?>
- 2: <!--
- 3:     JBoss, Home of Professional Open Source
- 4:     Copyright 2015, Red Hat, Inc. and/or its affiliates, and individual
- 5:     contributors by the @authors tag. See the copyright.txt in the
- 6:     distribution for a full listing of individual contributors.
- 7: 
- 8:     Licensed under the Apache License, Version 2.0 (the "License");
- 9:     you may not use this file except in compliance with the License.
-10:     You may obtain a copy of the License at
-11:     http://www.apache.org/licenses/LICENSE-2.0
-12:     Unless required by applicable law or agreed to in writing, software
-13:     distributed under the License is distributed on an "AS IS" BASIS,
-14:     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-15:     See the License for the specific language governing permissions and
-16:     limitations under the License.
-17: -->
-18: <!-- This file is not required if you don't need any extra configuration. -->
-19: <faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-20:               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-21:               xsi:schemaLocation="
-22:                   https://jakarta.ee/xml/ns/jakartaee
-23:                   https://jakarta.ee/xml/ns/jakartaee/web-facesconfig_4_0.xsd"
-24:               version="4.0">
-25: 
-26:     <!-- This descriptor activates the JSF Servlet -->
-27: 
-28:     <!-- Write your navigation rules here. You are encouraged to use CDI
-29:         for creating @Named managed beans. -->
-30: 
-31: </faces-config>
-```
-
-## File: src/main/webapp/WEB-INF/kitchensink-quickstart-ds.xml
-```xml
- 1: <?xml version="1.0" encoding="UTF-8"?>
- 2: <!--
- 3:     JBoss, Home of Professional Open Source
- 4:     Copyright 2015, Red Hat, Inc. and/or its affiliates, and individual
- 5:     contributors by the @authors tag. See the copyright.txt in the
- 6:     distribution for a full listing of individual contributors.
- 7: 
- 8:     Licensed under the Apache License, Version 2.0 (the "License");
- 9:     you may not use this file except in compliance with the License.
-10:     You may obtain a copy of the License at
-11:     http://www.apache.org/licenses/LICENSE-2.0
-12:     Unless required by applicable law or agreed to in writing, software
-13:     distributed under the License is distributed on an "AS IS" BASIS,
-14:     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-15:     See the License for the specific language governing permissions and
-16:     limitations under the License.
-17: -->
-18: <!-- This is an unmanaged datasource. It should be used for proofs of concept
-19:    or testing only. It uses H2, a lightweight, in-memory, example database that
-20:    ships with JBoss EAP. It is not robust or scalable, is not supported,
-21:    and should NOT be used in a production environment! -->
-22: <datasources xmlns="http://www.jboss.org/ironjacamar/schema"
-23:     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-24:     xsi:schemaLocation="http://www.jboss.org/ironjacamar/schema http://docs.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
-25:     <!-- The datasource is bound into JNDI at this location. We reference
-26:         this in META-INF/persistence.xml -->
-27:     <datasource jndi-name="java:jboss/datasources/KitchensinkQuickstartDS"
-28:         pool-name="kitchensink-quickstart" enabled="true"
-29:         use-java-context="true">
-30:         <connection-url>jdbc:h2:mem:kitchensink-quickstart;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1</connection-url>
-31:         <driver>h2</driver>
-32:         <security>
-33:             <user-name>sa</user-name>
-34:             <password>sa</password>
-35:         </security>
-36:     </datasource>
-37: </datasources>
-```
-
-## File: src/main/webapp/index.html
-```html
- 1: <!--
- 2:     JBoss, Home of Professional Open Source
- 3:     Copyright 2015, Red Hat, Inc. and/or its affiliates, and individual
- 4:     contributors by the @authors tag. See the copyright.txt in the
- 5:     distribution for a full listing of individual contributors.
- 6: 
  7:     Licensed under the Apache License, Version 2.0 (the "License");
  8:     you may not use this file except in compliance with the License.
  9:     You may obtain a copy of the License at
@@ -1190,16 +993,112 @@ README.html
 14:     See the License for the specific language governing permissions and
 15:     limitations under the License.
 16: -->
-17: <!-- Plain HTML page that kicks us into the app -->
-18: 
-19: <html>
-20:     <head>
-21:         <meta http-equiv="Refresh" content="0; URL=index.jsf">
-22:     </head>
-23: </html>
+17: <!-- Marker file indicating CDI should be enabled -->
+18: <beans xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+19:     xsi:schemaLocation="
+20:       http://xmlns.jcp.org/xml/ns/javaee
+21:       http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd"
+22:     bean-discovery-mode="all">
+23: </beans>
 ```
 
-## File: src/main/webapp/index.xhtml
+## File: legacy/src/main/webapp/WEB-INF/faces-config.xml
+```xml
+ 1: <?xml version="1.0"?>
+ 2: <!--
+ 3:     JBoss, Home of Professional Open Source
+ 4:     Copyright 2015, Red Hat, Inc. and/or its affiliates, and individual
+ 5:     contributors by the @authors tag. See the copyright.txt in the
+ 6:     distribution for a full listing of individual contributors.
+ 7:     Licensed under the Apache License, Version 2.0 (the "License");
+ 8:     you may not use this file except in compliance with the License.
+ 9:     You may obtain a copy of the License at
+10:     http://www.apache.org/licenses/LICENSE-2.0
+11:     Unless required by applicable law or agreed to in writing, software
+12:     distributed under the License is distributed on an "AS IS" BASIS,
+13:     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+14:     See the License for the specific language governing permissions and
+15:     limitations under the License.
+16: -->
+17: <!-- This file is not required if you don't need any extra configuration. -->
+18: <faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+19:               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+20:               xsi:schemaLocation="
+21:                   https://jakarta.ee/xml/ns/jakartaee
+22:                   https://jakarta.ee/xml/ns/jakartaee/web-facesconfig_4_0.xsd"
+23:               version="4.0">
+24:     <!-- This descriptor activates the JSF Servlet -->
+25:     <!-- Write your navigation rules here. You are encouraged to use CDI
+26:         for creating @Named managed beans. -->
+27: </faces-config>
+```
+
+## File: legacy/src/main/webapp/WEB-INF/kitchensink-quickstart-ds.xml
+```xml
+ 1: <?xml version="1.0" encoding="UTF-8"?>
+ 2: <!--
+ 3:     JBoss, Home of Professional Open Source
+ 4:     Copyright 2015, Red Hat, Inc. and/or its affiliates, and individual
+ 5:     contributors by the @authors tag. See the copyright.txt in the
+ 6:     distribution for a full listing of individual contributors.
+ 7:     Licensed under the Apache License, Version 2.0 (the "License");
+ 8:     you may not use this file except in compliance with the License.
+ 9:     You may obtain a copy of the License at
+10:     http://www.apache.org/licenses/LICENSE-2.0
+11:     Unless required by applicable law or agreed to in writing, software
+12:     distributed under the License is distributed on an "AS IS" BASIS,
+13:     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+14:     See the License for the specific language governing permissions and
+15:     limitations under the License.
+16: -->
+17: <!-- This is an unmanaged datasource. It should be used for proofs of concept
+18:    or testing only. It uses H2, a lightweight, in-memory, example database that
+19:    ships with JBoss EAP. It is not robust or scalable, is not supported,
+20:    and should NOT be used in a production environment! -->
+21: <datasources xmlns="http://www.jboss.org/ironjacamar/schema"
+22:     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+23:     xsi:schemaLocation="http://www.jboss.org/ironjacamar/schema http://docs.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
+24:     <!-- The datasource is bound into JNDI at this location. We reference
+25:         this in META-INF/persistence.xml -->
+26:     <datasource jndi-name="java:jboss/datasources/KitchensinkQuickstartDS"
+27:         pool-name="kitchensink-quickstart" enabled="true"
+28:         use-java-context="true">
+29:         <connection-url>jdbc:h2:mem:kitchensink-quickstart;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1</connection-url>
+30:         <driver>h2</driver>
+31:         <security>
+32:             <user-name>sa</user-name>
+33:             <password>sa</password>
+34:         </security>
+35:     </datasource>
+36: </datasources>
+```
+
+## File: legacy/src/main/webapp/index.html
+```html
+ 1: <!--
+ 2:     JBoss, Home of Professional Open Source
+ 3:     Copyright 2015, Red Hat, Inc. and/or its affiliates, and individual
+ 4:     contributors by the @authors tag. See the copyright.txt in the
+ 5:     distribution for a full listing of individual contributors.
+ 6:     Licensed under the Apache License, Version 2.0 (the "License");
+ 7:     you may not use this file except in compliance with the License.
+ 8:     You may obtain a copy of the License at
+ 9:     http://www.apache.org/licenses/LICENSE-2.0
+10:     Unless required by applicable law or agreed to in writing, software
+11:     distributed under the License is distributed on an "AS IS" BASIS,
+12:     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+13:     See the License for the specific language governing permissions and
+14:     limitations under the License.
+15: -->
+16: <!-- Plain HTML page that kicks us into the app -->
+17: <html>
+18:     <head>
+19:         <meta http-equiv="Refresh" content="0; URL=index.jsf">
+20:     </head>
+21: </html>
+```
+
+## File: legacy/src/main/webapp/index.xhtml
 ```
  1: <?xml version="1.0" encoding="UTF-8"?>
  2: <!--
@@ -1298,7 +1197,7 @@ README.html
 95: </ui:composition>
 ```
 
-## File: src/test/java/org/jboss/as/quickstarts/kitchensink/test/MemberRegistrationIT.java
+## File: legacy/src/test/java/org/jboss/as/quickstarts/kitchensink/test/MemberRegistrationIT.java
 ```java
  1: /*
  2:  * JBoss, Home of Professional Open Source
@@ -1317,61 +1216,52 @@ README.html
 15:  * limitations under the License.
 16:  */
 17: package org.jboss.as.quickstarts.kitchensink.test;
-18: 
-19: import static org.junit.Assert.assertNotNull;
-20: 
-21: import java.util.logging.Logger;
-22: 
-23: import jakarta.inject.Inject;
-24: 
-25: import org.jboss.arquillian.container.test.api.Deployment;
-26: import org.jboss.arquillian.junit.Arquillian;
-27: import org.jboss.as.quickstarts.kitchensink.model.Member;
-28: import org.jboss.as.quickstarts.kitchensink.service.MemberRegistration;
-29: import org.jboss.as.quickstarts.kitchensink.util.Resources;
-30: import org.jboss.shrinkwrap.api.Archive;
-31: import org.jboss.shrinkwrap.api.ShrinkWrap;
-32: import org.jboss.shrinkwrap.api.asset.StringAsset;
-33: import org.jboss.shrinkwrap.api.spec.WebArchive;
-34: import org.junit.Test;
-35: import org.junit.runner.RunWith;
-36: 
-37: @RunWith(Arquillian.class)
-38: public class MemberRegistrationIT {
-39:     @Deployment
-40:     public static Archive<?> createTestArchive() {
-41:         return ShrinkWrap.create(WebArchive.class, "test.war")
-42:             .addClasses(Member.class, MemberRegistration.class, Resources.class)
-43:             .addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
-44:             .addAsWebInfResource(new StringAsset("<beans xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
-45:                         + "xsi:schemaLocation=\"https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/beans_3_0.xsd\"\n"
-46:                         + "bean-discovery-mode=\"all\">\n"
-47:                         + "</beans>"), "beans.xml")
-48:             // Deploy our test datasource
-49:             .addAsWebInfResource("test-ds.xml");
-50:     }
-51: 
-52:     @Inject
-53:     MemberRegistration memberRegistration;
-54: 
-55:     @Inject
-56:     Logger log;
-57: 
-58:     @Test
-59:     public void testRegister() throws Exception {
-60:         Member newMember = new Member();
-61:         newMember.setName("Jane Doe");
-62:         newMember.setEmail("jane@mailinator.com");
-63:         newMember.setPhoneNumber("2125551234");
-64:         memberRegistration.register(newMember);
-65:         assertNotNull(newMember.getId());
-66:         log.info(newMember.getName() + " was persisted with id " + newMember.getId());
-67:     }
-68: 
-69: }
+18: import static org.junit.Assert.assertNotNull;
+19: import java.util.logging.Logger;
+20: import jakarta.inject.Inject;
+21: import org.jboss.arquillian.container.test.api.Deployment;
+22: import org.jboss.arquillian.junit.Arquillian;
+23: import org.jboss.as.quickstarts.kitchensink.model.Member;
+24: import org.jboss.as.quickstarts.kitchensink.service.MemberRegistration;
+25: import org.jboss.as.quickstarts.kitchensink.util.Resources;
+26: import org.jboss.shrinkwrap.api.Archive;
+27: import org.jboss.shrinkwrap.api.ShrinkWrap;
+28: import org.jboss.shrinkwrap.api.asset.StringAsset;
+29: import org.jboss.shrinkwrap.api.spec.WebArchive;
+30: import org.junit.Test;
+31: import org.junit.runner.RunWith;
+32: @RunWith(Arquillian.class)
+33: public class MemberRegistrationIT {
+34:     @Deployment
+35:     public static Archive<?> createTestArchive() {
+36:         return ShrinkWrap.create(WebArchive.class, "test.war")
+37:             .addClasses(Member.class, MemberRegistration.class, Resources.class)
+38:             .addAsResource("META-INF/test-persistence.xml", "META-INF/persistence.xml")
+39:             .addAsWebInfResource(new StringAsset("<beans xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+40:                         + "xsi:schemaLocation=\"https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/beans_3_0.xsd\"\n"
+41:                         + "bean-discovery-mode=\"all\">\n"
+42:                         + "</beans>"), "beans.xml")
+43:             // Deploy our test datasource
+44:             .addAsWebInfResource("test-ds.xml");
+45:     }
+46:     @Inject
+47:     MemberRegistration memberRegistration;
+48:     @Inject
+49:     Logger log;
+50:     @Test
+51:     public void testRegister() throws Exception {
+52:         Member newMember = new Member();
+53:         newMember.setName("Jane Doe");
+54:         newMember.setEmail("jane@mailinator.com");
+55:         newMember.setPhoneNumber("2125551234");
+56:         memberRegistration.register(newMember);
+57:         assertNotNull(newMember.getId());
+58:         log.info(newMember.getName() + " was persisted with id " + newMember.getId());
+59:     }
+60: }
 ```
 
-## File: src/test/java/org/jboss/as/quickstarts/kitchensink/test/RemoteMemberRegistrationIT.java
+## File: legacy/src/test/java/org/jboss/as/quickstarts/kitchensink/test/RemoteMemberRegistrationIT.java
 ```java
  1: /*
  2:  * JBoss, Home of Professional Open Source
@@ -1390,69 +1280,59 @@ README.html
 15:  * limitations under the License.
 16:  */
 17: package org.jboss.as.quickstarts.kitchensink.test;
-18: 
-19: import jakarta.json.Json;
-20: import jakarta.json.JsonObject;
-21: 
-22: import java.util.logging.Logger;
-23: 
-24: import java.net.URI;
-25: import java.net.URISyntaxException;
-26: import java.net.http.HttpClient;
-27: import java.net.http.HttpRequest;
-28: import java.net.http.HttpResponse;
-29: 
-30: import org.jboss.as.quickstarts.kitchensink.model.Member;
-31: import org.junit.Assert;
-32: import org.junit.Test;
-33: 
-34: public class RemoteMemberRegistrationIT {
-35: 
-36:     private static final Logger log = Logger.getLogger(RemoteMemberRegistrationIT.class.getName());
-37: 
-38:     protected URI getHTTPEndpoint() {
-39:         String host = getServerHost();
-40:         if (host == null) {
-41:             host = "http://localhost:8080/kitchensink";
-42:         }
-43:         try {
-44:             return new URI(host + "/rest/members");
-45:         } catch (URISyntaxException ex) {
-46:             throw new RuntimeException(ex);
-47:         }
+18: import jakarta.json.Json;
+19: import jakarta.json.JsonObject;
+20: import java.util.logging.Logger;
+21: import java.net.URI;
+22: import java.net.URISyntaxException;
+23: import java.net.http.HttpClient;
+24: import java.net.http.HttpRequest;
+25: import java.net.http.HttpResponse;
+26: import org.jboss.as.quickstarts.kitchensink.model.Member;
+27: import org.junit.Assert;
+28: import org.junit.Test;
+29: public class RemoteMemberRegistrationIT {
+30:     private static final Logger log = Logger.getLogger(RemoteMemberRegistrationIT.class.getName());
+31:     protected URI getHTTPEndpoint() {
+32:         String host = getServerHost();
+33:         if (host == null) {
+34:             host = "http://localhost:8080/kitchensink";
+35:         }
+36:         try {
+37:             return new URI(host + "/rest/members");
+38:         } catch (URISyntaxException ex) {
+39:             throw new RuntimeException(ex);
+40:         }
+41:     }
+42:     private String getServerHost() {
+43:         String host = System.getenv("SERVER_HOST");
+44:         if (host == null) {
+45:             host = System.getProperty("server.host");
+46:         }
+47:         return host;
 48:     }
-49: 
-50:     private String getServerHost() {
-51:         String host = System.getenv("SERVER_HOST");
-52:         if (host == null) {
-53:             host = System.getProperty("server.host");
-54:         }
-55:         return host;
-56:     }
-57: 
-58:     @Test
-59:     public void testRegister() throws Exception {
-60:         Member newMember = new Member();
-61:         newMember.setName("Jane Doe");
-62:         newMember.setEmail("jane@mailinator.com");
-63:         newMember.setPhoneNumber("2125551234");
-64:         JsonObject json = Json.createObjectBuilder()
-65:                 .add("name", "Jane Doe")
-66:                 .add("email", "jane@mailinator.com")
-67:                 .add("phoneNumber", "2125551234").build();
-68:         HttpRequest request = HttpRequest.newBuilder(getHTTPEndpoint())
-69:                 .header("Content-Type", "application/json")
-70:                 .POST(HttpRequest.BodyPublishers.ofString(json.toString()))
-71:                 .build();
-72:         HttpResponse response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-73:         Assert.assertEquals(200, response.statusCode());
-74:         Assert.assertEquals("", response.body().toString() );
-75:     }
-76: 
-77: }
+49:     @Test
+50:     public void testRegister() throws Exception {
+51:         Member newMember = new Member();
+52:         newMember.setName("Jane Doe");
+53:         newMember.setEmail("jane@mailinator.com");
+54:         newMember.setPhoneNumber("2125551234");
+55:         JsonObject json = Json.createObjectBuilder()
+56:                 .add("name", "Jane Doe")
+57:                 .add("email", "jane@mailinator.com")
+58:                 .add("phoneNumber", "2125551234").build();
+59:         HttpRequest request = HttpRequest.newBuilder(getHTTPEndpoint())
+60:                 .header("Content-Type", "application/json")
+61:                 .POST(HttpRequest.BodyPublishers.ofString(json.toString()))
+62:                 .build();
+63:         HttpResponse response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+64:         Assert.assertEquals(200, response.statusCode());
+65:         Assert.assertEquals("", response.body().toString() );
+66:     }
+67: }
 ```
 
-## File: src/test/resources/META-INF/test-persistence.xml
+## File: legacy/src/test/resources/META-INF/test-persistence.xml
 ```xml
  1: <?xml version="1.0" encoding="UTF-8"?>
  2: <!--
@@ -1460,39 +1340,38 @@ README.html
  4:     Copyright 2015, Red Hat, Inc. and/or its affiliates, and individual
  5:     contributors by the @authors tag. See the copyright.txt in the
  6:     distribution for a full listing of individual contributors.
- 7: 
- 8:     Licensed under the Apache License, Version 2.0 (the "License");
- 9:     you may not use this file except in compliance with the License.
-10:     You may obtain a copy of the License at
-11:     http://www.apache.org/licenses/LICENSE-2.0
-12:     Unless required by applicable law or agreed to in writing, software
-13:     distributed under the License is distributed on an "AS IS" BASIS,
-14:     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-15:     See the License for the specific language governing permissions and
-16:     limitations under the License.
-17: -->
-18: <persistence version="2.0"
-19:    xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-20:    xsi:schemaLocation="
-21:         http://java.sun.com/xml/ns/persistence
-22:         http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
-23:    <persistence-unit name="primary">
-24:       <!-- We use a different datasource for tests, so as to not overwrite
-25:          production data. This is an unmanaged data source, backed by H2, an in memory
-26:          database. Production applications should use a managed datasource. -->
-27:       <!-- The datasource is deployed as WEB-INF/test-ds.xml,
-28:          you can find it in the source at src/test/resources/test-ds.xml -->
-29:       <jta-data-source>java:jboss/datasources/KitchensinkQuickstartTestDS</jta-data-source>
-30:       <properties>
-31:          <!-- Properties for Hibernate -->
-32:          <property name="hibernate.hbm2ddl.auto" value="create-drop" />
-33:          <property name="hibernate.show_sql" value="false" />
-34:       </properties>
-35:    </persistence-unit>
-36: </persistence>
+ 7:     Licensed under the Apache License, Version 2.0 (the "License");
+ 8:     you may not use this file except in compliance with the License.
+ 9:     You may obtain a copy of the License at
+10:     http://www.apache.org/licenses/LICENSE-2.0
+11:     Unless required by applicable law or agreed to in writing, software
+12:     distributed under the License is distributed on an "AS IS" BASIS,
+13:     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+14:     See the License for the specific language governing permissions and
+15:     limitations under the License.
+16: -->
+17: <persistence version="2.0"
+18:    xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+19:    xsi:schemaLocation="
+20:         http://java.sun.com/xml/ns/persistence
+21:         http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+22:    <persistence-unit name="primary">
+23:       <!-- We use a different datasource for tests, so as to not overwrite
+24:          production data. This is an unmanaged data source, backed by H2, an in memory
+25:          database. Production applications should use a managed datasource. -->
+26:       <!-- The datasource is deployed as WEB-INF/test-ds.xml,
+27:          you can find it in the source at src/test/resources/test-ds.xml -->
+28:       <jta-data-source>java:jboss/datasources/KitchensinkQuickstartTestDS</jta-data-source>
+29:       <properties>
+30:          <!-- Properties for Hibernate -->
+31:          <property name="hibernate.hbm2ddl.auto" value="create-drop" />
+32:          <property name="hibernate.show_sql" value="false" />
+33:       </properties>
+34:    </persistence-unit>
+35: </persistence>
 ```
 
-## File: src/test/resources/arquillian.xml
+## File: legacy/src/test/resources/arquillian.xml
 ```xml
  1: <?xml version="1.0" encoding="UTF-8"?>
  2: <!--
@@ -1500,39 +1379,36 @@ README.html
  4:     Copyright 2017, Red Hat, Inc. and/or its affiliates, and individual
  5:     contributors by the @authors tag. See the copyright.txt in the
  6:     distribution for a full listing of individual contributors.
- 7: 
- 8:     Licensed under the Apache License, Version 2.0 (the "License");
- 9:     you may not use this file except in compliance with the License.
-10:     You may obtain a copy of the License at
-11:     http://www.apache.org/licenses/LICENSE-2.0
-12:     Unless required by applicable law or agreed to in writing, software
-13:     distributed under the License is distributed on an "AS IS" BASIS,
-14:     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-15:     See the License for the specific language governing permissions and
-16:     limitations under the License.
-17: -->
-18: <arquillian xmlns="http://jboss.org/schema/arquillian" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-19:             xsi:schemaLocation="http://jboss.org/schema/arquillian
-20:     http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
-21: 
-22:     <!-- Uncomment to have test archives exported to the file system for inspection -->
-23:     <!--<engine>
-24:         <property name="deploymentExportPath">target/</property>
-25:     </engine>-->
-26: 
-27:     <!-- Example configuration for a managed JBoss EAP instance -->
-28:     <container qualifier="jboss" default="true">
-29:         <!-- By default, Arquillian will use the JBOSS_HOME environment variable to find the JBoss EAP installation.
-30:              If you prefer not to define the JBOSS_HOME environment variable, alternatively you can uncomment the
-31:              following `jbossHome` property and replace EAP_HOME with the path to your JBoss EAP installation. -->
-32:         <!--<configuration>
-33:             <property name="jbossHome">EAP_HOME</property>
-34:         </configuration> -->
-35:     </container>
-36: </arquillian>
+ 7:     Licensed under the Apache License, Version 2.0 (the "License");
+ 8:     you may not use this file except in compliance with the License.
+ 9:     You may obtain a copy of the License at
+10:     http://www.apache.org/licenses/LICENSE-2.0
+11:     Unless required by applicable law or agreed to in writing, software
+12:     distributed under the License is distributed on an "AS IS" BASIS,
+13:     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+14:     See the License for the specific language governing permissions and
+15:     limitations under the License.
+16: -->
+17: <arquillian xmlns="http://jboss.org/schema/arquillian" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+18:             xsi:schemaLocation="http://jboss.org/schema/arquillian
+19:     http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+20:     <!-- Uncomment to have test archives exported to the file system for inspection -->
+21:     <!--<engine>
+22:         <property name="deploymentExportPath">target/</property>
+23:     </engine>-->
+24:     <!-- Example configuration for a managed JBoss EAP instance -->
+25:     <container qualifier="jboss" default="true">
+26:         <!-- By default, Arquillian will use the JBOSS_HOME environment variable to find the JBoss EAP installation.
+27:              If you prefer not to define the JBOSS_HOME environment variable, alternatively you can uncomment the
+28:              following `jbossHome` property and replace EAP_HOME with the path to your JBoss EAP installation. -->
+29:         <!--<configuration>
+30:             <property name="jbossHome">EAP_HOME</property>
+31:         </configuration> -->
+32:     </container>
+33: </arquillian>
 ```
 
-## File: src/test/resources/test-ds.xml
+## File: legacy/src/test/resources/test-ds.xml
 ```xml
  1: <?xml version="1.0" encoding="UTF-8"?>
  2: <!--
@@ -1540,40 +1416,39 @@ README.html
  4:     Copyright 2015, Red Hat, Inc. and/or its affiliates, and individual
  5:     contributors by the @authors tag. See the copyright.txt in the
  6:     distribution for a full listing of individual contributors.
- 7: 
- 8:     Licensed under the Apache License, Version 2.0 (the "License");
- 9:     you may not use this file except in compliance with the License.
-10:     You may obtain a copy of the License at
-11:     http://www.apache.org/licenses/LICENSE-2.0
-12:     Unless required by applicable law or agreed to in writing, software
-13:     distributed under the License is distributed on an "AS IS" BASIS,
-14:     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-15:     See the License for the specific language governing permissions and
-16:     limitations under the License.
-17: -->
-18: <!-- This is an unmanaged datasource. It should be used for proofs of concept
-19:    or testing only. It uses H2, a lightweight, in-memory, example database that
-20:    ships with JBoss EAP. It is not robust or scalable, is not supported,
-21:    and should NOT be used in a production environment! -->
-22: <datasources xmlns="http://www.jboss.org/ironjacamar/schema"
-23:    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-24:    xsi:schemaLocation="http://www.jboss.org/ironjacamar/schema http://docs.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
-25:    <!-- The datasource is bound into JNDI at this location. We reference
-26:       this in META-INF/test-persistence.xml -->
-27:    <datasource jndi-name="java:jboss/datasources/KitchensinkQuickstartTestDS"
-28:       pool-name="kitchensink-quickstart-test" enabled="true"
-29:       use-java-context="true">
-30:       <connection-url>jdbc:h2:mem:kitchensink-quickstart-test;DB_CLOSE_DELAY=-1</connection-url>
-31:       <driver>h2</driver>
-32:       <security>
-33:          <user-name>sa</user-name>
-34:          <password>sa</password>
-35:       </security>
-36:    </datasource>
-37: </datasources>
+ 7:     Licensed under the Apache License, Version 2.0 (the "License");
+ 8:     you may not use this file except in compliance with the License.
+ 9:     You may obtain a copy of the License at
+10:     http://www.apache.org/licenses/LICENSE-2.0
+11:     Unless required by applicable law or agreed to in writing, software
+12:     distributed under the License is distributed on an "AS IS" BASIS,
+13:     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+14:     See the License for the specific language governing permissions and
+15:     limitations under the License.
+16: -->
+17: <!-- This is an unmanaged datasource. It should be used for proofs of concept
+18:    or testing only. It uses H2, a lightweight, in-memory, example database that
+19:    ships with JBoss EAP. It is not robust or scalable, is not supported,
+20:    and should NOT be used in a production environment! -->
+21: <datasources xmlns="http://www.jboss.org/ironjacamar/schema"
+22:    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+23:    xsi:schemaLocation="http://www.jboss.org/ironjacamar/schema http://docs.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
+24:    <!-- The datasource is bound into JNDI at this location. We reference
+25:       this in META-INF/test-persistence.xml -->
+26:    <datasource jndi-name="java:jboss/datasources/KitchensinkQuickstartTestDS"
+27:       pool-name="kitchensink-quickstart-test" enabled="true"
+28:       use-java-context="true">
+29:       <connection-url>jdbc:h2:mem:kitchensink-quickstart-test;DB_CLOSE_DELAY=-1</connection-url>
+30:       <driver>h2</driver>
+31:       <security>
+32:          <user-name>sa</user-name>
+33:          <password>sa</password>
+34:       </security>
+35:    </datasource>
+36: </datasources>
 ```
 
-## File: .cheatsheet.xml
+## File: legacy/.cheatsheet.xml
 ```xml
   1: <?xml version="1.0" encoding="UTF-8"?>
   2: <!--
@@ -1581,698 +1456,669 @@ README.html
   4:     Copyright 2015, Red Hat, Inc. and/or its affiliates, and individual
   5:     contributors by the @authors tag. See the copyright.txt in the
   6:     distribution for a full listing of individual contributors.
-  7: 
-  8:     Licensed under the Apache License, Version 2.0 (the "License");
-  9:     you may not use this file except in compliance with the License.
- 10:     You may obtain a copy of the License at
- 11:     http://www.apache.org/licenses/LICENSE-2.0
- 12:     Unless required by applicable law or agreed to in writing, software
- 13:     distributed under the License is distributed on an "AS IS" BASIS,
- 14:     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- 15:     See the License for the specific language governing permissions and
- 16:     limitations under the License.
- 17: -->
- 18: <cheatsheet title="CDI + JSF + EJB + JTA + Bean Validation + JAX-RS + Arquillian: Kitchensink quickstart">
- 19:   <intro>
- 20:     <description>
- 21: This quickstart shows off all the new features of Jakarta EE, and makes a great starting point for your project.
- 22: <br/><br/>
- 23: <b>Bean Validation</b>
- 24: <br/><br/>
- 25: Bean Validation is a new specification in Jakarta EE, inspired by Hibernate Validator. It allows application developers to specify constraints once (often in their domain model), and have them applied in all layers of the application, protecting data and giving useful feedback to users.
- 26: <br/><br/>
- 27: <b>JAX-RS: The Java API for RESTful Web Services</b>
- 28: <br/><br/>
- 29: JAX-RS is a specification in Jakarta EE. It allows application developers to easily expose Java services as RESTful web services.
- 30: </description>
- 31: </intro>
- 32:   <item
- 33:         skip="false"
- 34:         title="The kitchensink example in depth">
- 35:      <description>
- 36:        The kitchensink application shows off a number of Jakarta EE technologies such as CDI, JSF, EJB, JTA, JAX-RS and Arquillian.
- 37:        It does this by providing a member registration database, available via JSF and JAX-RS.
- 38: <br/><br/>
- 39: As usual, let&apos;s start by looking at the necessary deployment descriptors.
- 40: By now, we're very used to seeing <b>beans.xml</b> and <b>faces-config.xml</b> in <b>WEB-INF/</b>
- 41: (which can be found in the <b>src/main/webapp</b> directory of the example).
- 42: Notice that, once again, we don&apos;t need a web.xml.
- 43: There are two configuration files in <b>WEB-INF/classes/META-INF</b>
- 44: (which can be found in the <b>src/main/resources</b> directory of the example) — <b>persistence.xml</b>,
- 45: which sets up JPA, and <b>import.sql</b> which Hibernate, the JPA provider in JBoss EAP,
- 46: will use to load the initial users into the application when the application starts.
- 47: We discussed both of these files in detail in The <b>greeter example in depth</b>, and these are largely the same.
- 48:     </description>
- 49:     <command
- 50:     required="true"
- 51:     returns="currentProject"
- 52:     serialization="org.jboss.tools.project.examples.cheatsheet.getProjectForCheatsheet"/>
- 53:   </item>
- 54: 
- 55:    <item
- 56:          title="default.xhtml">
- 57:       <description>
- 58:       Next, let&apos;s take a look at the JSF view the user sees. As usual, we use a template to provide the sidebar and footer. This one lives in <b>WEB-INF/templates/default.xhtml</b>:
- 59:       </description>
- 60:       <subitem
- 61:             label="We have a common &lt;head&gt; element, where we define styles and more. "
- 62:             skip="true">
- 63:         <command
- 64:       required="false"
- 65:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/webapp/WEB-INF/templates/default.xhtml,fromLine=22,toLine=26)"/>
- 66:     </subitem>
- 67:     <subitem
- 68:             label="This application defines a common sidebar, putting them in the template means we only have to define them once."
- 69:             skip="true">
- 70:     <command
- 71:       required="false"
- 72:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/webapp/WEB-INF/templates/default.xhtml,fromLine=37,toLine=52)"/>
- 73:     </subitem>
- 74:     <subitem
- 75:             label="and a common footer... "
- 76:             skip="true">
- 77:         <command
- 78:       required="false"
- 79:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/webapp/WEB-INF/templates/default.xhtml,fromLine=53,toLine=58)"/>
- 80:     </subitem>
- 81:     <subitem
- 82:             label="The content is inserted here, and defined by views using this template. "
- 83:             skip="true">
- 84:         <command
- 85:       required="false"
- 86:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/webapp/WEB-INF/templates/default.xhtml,fromLine=32,toLine=36)"/>
- 87:        </subitem>
- 88: 
- 89:   </item>
- 90: 
- 91:   <item
- 92:       title="index.xhtml">
- 93:       <description>
- 94:       That leaves the main page, index.xhtml, in which we place the content unique to the main page:
- 95:       </description>
- 96:       <subitem
- 97:             label="The JSF form allows us to register new users. There should be one already created when the application started."
- 98:             skip="true">
- 99:         <command
-100:       required="false"
-101:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/webapp/index.xhtml,fromLine=33,toLine=62)"/>
-102:     </subitem>
-103:     <subitem
-104:             label="The application uses Bean Validation to validate data entry. The error messages from Bean Validation are automatically attached to the relevant field by JSF, and adding a messages JSF component will display them."
-105:             skip="true">
-106:       </subitem>
-107:       <subitem
-108:             label="Name validation">
-109:     <command
-110:       required="false"
-111:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/webapp/index.xhtml,fromLine=39,toLine=40)"/>
-112:     </subitem>
-113:     <subitem
-114:             label="Email validation"
-115:             skip="true">
-116:     <command
-117:       required="false"
-118:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/webapp/index.xhtml,fromLine=43,toLine=44)"/>
-119:     </subitem>
-120:     <subitem
-121:             label="Phone number validation"
-122:             skip="true">
-123:     <command
-124:       required="false"
-125:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/webapp/index.xhtml,fromLine=47,toLine=49)"/>
-126:     </subitem>
-127:     <subitem
-128:             label="This application exposes REST endpoints for each registered member. The application helpfully displays the URL to the REST endpoint on this page. "
-129:             skip="true">
-130:     <command
-131:       required="false"
-132:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/webapp/index.xhtml,fromLine=86,toLine=90)"/>
-133:     </subitem>
-134: 
-135:   </item>
-136: 
-137:   <item
-138:         skip="true"
-139:         title="Member.java">
-140:      <description>
-141:        Next, let&apos;s take a look at the Member entity, before we look at how the application is wired together:
-142:     </description>
-143:     <subitem
-144:             label="As usual with JPA, we define that the class is an entity by adding @Entity"
-145:             skip="true">
-146:     <command
-147:       required="false"
-148:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/model/Member.java,fromLine=37)"/>
-149:   </subitem>
-150:   <subitem
-151:             label="Members are exposed as a RESTful service using JAX-RS. We can use JAXB to map the object to XML and to do this we need to add @XmlRootElement."
-152:             skip="true">
-153:     <command
-154:       required="false"
-155:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/model/Member.java,fromLine=38)"/>
-156:   </subitem>
-157:   <subitem
-158:             label="Bean Validation allows constraints to be defined once (on the entity) and applied everywhere. Here we constrain the person's name to a certain size and regular expression. "
-159:             skip="true">
-160:     <command
-161:       required="false"
-162:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/model/Member.java,fromLine=46,toLine=48)"/>
-163:   </subitem>
-164:   <subitem
-165:             label="Hibernate Validator also offers some extra validations such as @Email. "
-166:             skip="true">
-167:     <command
-168:       required="false"
-169:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/model/Member.java,fromLine=53,toLine=53)"/>
-170:   </subitem>
-171:   <subitem
-172:             label="@Digits, @NotNull and @Size are further examples of constraints. "
-173:             skip="true">
-174:     <command
-175:       required="false"
-176:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/model/Member.java,fromLine=56,toLine=58)"/>
-177:   </subitem>
-178: 
-179:   </item>
-180: 
-181:   <item
-182:         skip="true"
-183:         title="MemberRepository.java">
-184:      <description>
-185:        Let&apos;s take a look at MemberRepository, which is responsible for interactions with the persistence layer:
-186:     </description>
-187:     <subitem
-188:             label="The bean is application scoped, as it is a singleton."
-189:             skip="true">
-190:     <command
-191:       required="false"
-192:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/data/MemberRepository.java,fromLine=29)"/>
-193:   </subitem>
-194:   <subitem
-195:             label="The entity manager is injected, to allow interaction with JPA."
-196:             skip="true">
-197:     <command
-198:       required="false"
-199:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/data/MemberRepository.java,fromLine=32)"/>
-200:   </subitem>
-201:   <subitem
-202:             label="The JPA criteria api is used to load a member by his or her unique identifier, email address."
-203:             skip="true">
-204:     <command
-205:       required="false"
-206:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/data/MemberRepository.java,fromLine=40,toLine=47)"/>
-207:   </subitem>
-208:   <subitem
-209:             label="The criteria api can also be used to load lists of entities ."
-210:             skip="true">
-211:     <command
-212:       required="false"
-213:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/data/MemberRepository.java,fromLine=51,toLine=58)"/>
-214:   </subitem>
-215: 
-216:   </item>
-217: 
-218:    <item
-219:         skip="true"
-220:         title="MemberListProducer.java">
-221:      <description>
-222:        Next, let&apos;s take a look at MemberListProducer, which is responsible for building the list of members, ordered by name. It uses JPA 2 criteria to do this.
-223:     </description>
-224:     <subitem
-225:             label="This bean is request scoped, meaning that any fields (such as members) will be stored for the entire request."
-226:             skip="true">
-227:        <command
-228:       required="false"
-229:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/data/MemberListProducer.java,fromLine=30)"/>
-230:   </subitem>
-231:   <subitem
-232:             label="The MemberRepository is responsible for interactions with the persistence layer"
-233:             skip="true">
-234:        <command
-235:       required="false"
-236:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/data/MemberListProducer.java,fromLine=33,toLine=34)"/>
-237:   </subitem>
-238: 
-239:   <subitem
-240:             label="The list of members is exposed as a producer method. It's also available via EL. "
-241:             skip="true">
-242:     <command
-243:       required="false"
-244:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/data/MemberListProducer.java,fromLine=40,toLine=41)"/>
-245:   </subitem>
-246:   <subitem
-247:             label="The observer method is notified whenever a member is created, removed, or updated. This allows us to refresh the list of members whenever they are needed. This is a good approach as it allows us to cache the list of members, but keep it up to date at the same time."
-248:             skip="true">
-249:     <command
-250:       required="false"
-251:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/data/MemberListProducer.java,fromLine=46,toLine=48)"/>
-252:   </subitem>
-253: 
-254:   </item>
-255: 
-256:   <item
-257:         skip="true"
-258:         title="MemberRegistration.java">
-259:      <description>
-260:        Let&apos;s now look at MemberRegistration, the class that allows us to create new members from the JSF page
-261:     </description>
-262:     <subitem
-263:             label="This bean requires transactions as it needs to write to the database. Making this an EJB gives us access to declarative transactions - much simpler than manual transaction control! "
-264:             skip="true">
-265:     <command
-266:       required="false"
-267:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/service/MemberRegistration.java,fromLine=28)"/>
-268:   </subitem>
-269:   <subitem
-270:             label="Here we inject a JDK logger, defined in the Resources class."
-271:             skip="true">
-272:     <command
-273:       required="false"
-274:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/service/MemberRegistration.java,fromLine=31)"/>
-275:   </subitem>
-276:   <subitem
-277:             label="An event is sent every time a member is updated. This allows other pieces of code (in this quickstart the member list is refreshed) to react to changes in the member list without any coupling to this class. "
-278:             skip="true">
-279:     <command
-280:       required="false"
-281:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/service/MemberRegistration.java,fromLine=43)"/>
-282:   </subitem>
-283: 
-284:   </item>
-285: 
-286:   <item
-287:         skip="true"
-288:         title="Resources.java">
-289:      <description>
-290:        Now, let's take a look at the Resources class, which provides resources such as the entity manager. CDI recommends using "resource producers", as we do in this example, to alias resources to CDI beans, allowing for a consistent style throughout our application:
-291:     </description>
-292:     <subitem
-293:             label="We use the 'resource producer' pattern, from CDI, to 'alias' the old fashioned @PersistenceContext injection of the entity manager to a CDI style injection. This allows us to use a consistent injection style (@Inject) throughout the application. "
-294:             skip="true">
-295:       <command
-296:       required="false"
-297:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/util/Resources.java,fromLine=43)"/>
-298:     </subitem>
-299:     <subitem
-300:             label="We expose a JDK logger for injection. In order to save a bit more boiler plate, we automatically set the logger category as the class name! "
-301:             skip="true">
-302:       <command
-303:       required="false"
-304:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/util/Resources.java,fromLine=47)"/>
-305:     </subitem>
-306:     <subitem
-307:             label="We expose the FacesContext via a producer method, which allows it to be injected. If we were adding tests, we could also then mock it out."
-308:             skip="true">
-309:       <command
-310:       required="false"
-311:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/util/Resources.java,fromLine=52)"/>
-312:     </subitem>
-313:     <subitem
-314:             label="If you want to define your own datasource, take a look at the Configuration Guide for Red Hat JBoss Enterprise Application Platform."
-315:             skip="true">
-316:     <command
-317:            required="false"
-318:            serialization="org.eclipse.ui.browser.openBrowser(url=https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/)"/>
-319:     </subitem>
-320:   </item>
-321: 
-322:   <item
-323:         skip="true"
-324:         title="MemberController.java">
-325:      <description>
-326:        Of course, we need to allow JSF to interact with the services. The MemberController class is responsible for this:
-327:     </description>
-328:     <subitem
-329:             label="The MemberController class uses the @Model stereotype, which adds @Named and @RequestScoped to the class. "
-330:             skip="true">
-331:     <command
-332:       required="false"
-333:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/controller/MemberController.java,fromLine=34)"/>
-334:   </subitem>
-335:   <subitem
-336:             label="The FacesContext is injected, so that messages can be sent to the user."
-337:             skip="true">
-338:     <command
-339:       required="false"
-340:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/controller/MemberController.java,fromLine=37)"/>
-341:   </subitem>
-342:   <subitem
-343:             label="The MemberRegistration bean is injected, to allow the controller to interact with the database."
-344:             skip="true">
-345:     <command
-346:       required="false"
-347:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/controller/MemberController.java,fromLine=40)"/>
-348:   </subitem>
-349:   <subitem
-350:             label="The Member class is exposed using a named producer field, which allows access from JSF. Note that the named producer field has dependent scope, so every time it is injected, the field will be read "
-351:             skip="true">
-352:     <command
-353:       required="false"
-354:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/controller/MemberController.java,fromLine=43,toLine=45)"/>
-355:   </subitem>
-356:   <subitem
-357:             label="The @PostConstruct annotation causes a new member object to be placed in the newMember field when the bean is instantiated."
-358:             skip="true">
-359:     <command
-360:       required="false"
-361:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/controller/MemberController.java,fromLine=47)"/>
-362:   </subitem>
-363:   <subitem
-364:             label="When the register method is called, the newMember object is passed to the persistence service."
-365:             skip="true">
-366:     <command
-367:       required="false"
-368:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/controller/MemberController.java,fromLine=54)"/>
-369:   </subitem>
-370:   <subitem
-371:             label="We also send a message to the user, to give them feedback on their actions."
-372:             skip="true">
-373:     <command
-374:       required="false"
-375:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/controller/MemberController.java,fromLine=56)"/>
-376:   </subitem>
-377:   <subitem
-378:             label="Finally, we replace the newMember with a new object, thus blanking out the data the user has added so far. This works as the producer field is dependent scoped."
-379:             skip="true">
-380:     <command
-381:       required="false"
-382:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/controller/MemberController.java,fromLine=57)"/>
-383:   </subitem>
-384: 
+  7:     Licensed under the Apache License, Version 2.0 (the "License");
+  8:     you may not use this file except in compliance with the License.
+  9:     You may obtain a copy of the License at
+ 10:     http://www.apache.org/licenses/LICENSE-2.0
+ 11:     Unless required by applicable law or agreed to in writing, software
+ 12:     distributed under the License is distributed on an "AS IS" BASIS,
+ 13:     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ 14:     See the License for the specific language governing permissions and
+ 15:     limitations under the License.
+ 16: -->
+ 17: <cheatsheet title="CDI + JSF + EJB + JTA + Bean Validation + JAX-RS + Arquillian: Kitchensink quickstart">
+ 18:   <intro>
+ 19:     <description>
+ 20: This quickstart shows off all the new features of Jakarta EE, and makes a great starting point for your project.
+ 21: <br/><br/>
+ 22: <b>Bean Validation</b>
+ 23: <br/><br/>
+ 24: Bean Validation is a new specification in Jakarta EE, inspired by Hibernate Validator. It allows application developers to specify constraints once (often in their domain model), and have them applied in all layers of the application, protecting data and giving useful feedback to users.
+ 25: <br/><br/>
+ 26: <b>JAX-RS: The Java API for RESTful Web Services</b>
+ 27: <br/><br/>
+ 28: JAX-RS is a specification in Jakarta EE. It allows application developers to easily expose Java services as RESTful web services.
+ 29: </description>
+ 30: </intro>
+ 31:   <item
+ 32:         skip="false"
+ 33:         title="The kitchensink example in depth">
+ 34:      <description>
+ 35:        The kitchensink application shows off a number of Jakarta EE technologies such as CDI, JSF, EJB, JTA, JAX-RS and Arquillian.
+ 36:        It does this by providing a member registration database, available via JSF and JAX-RS.
+ 37: <br/><br/>
+ 38: As usual, let&apos;s start by looking at the necessary deployment descriptors.
+ 39: By now, we're very used to seeing <b>beans.xml</b> and <b>faces-config.xml</b> in <b>WEB-INF/</b>
+ 40: (which can be found in the <b>src/main/webapp</b> directory of the example).
+ 41: Notice that, once again, we don&apos;t need a web.xml.
+ 42: There are two configuration files in <b>WEB-INF/classes/META-INF</b>
+ 43: (which can be found in the <b>src/main/resources</b> directory of the example) — <b>persistence.xml</b>,
+ 44: which sets up JPA, and <b>import.sql</b> which Hibernate, the JPA provider in JBoss EAP,
+ 45: will use to load the initial users into the application when the application starts.
+ 46: We discussed both of these files in detail in The <b>greeter example in depth</b>, and these are largely the same.
+ 47:     </description>
+ 48:     <command
+ 49:     required="true"
+ 50:     returns="currentProject"
+ 51:     serialization="org.jboss.tools.project.examples.cheatsheet.getProjectForCheatsheet"/>
+ 52:   </item>
+ 53:    <item
+ 54:          title="default.xhtml">
+ 55:       <description>
+ 56:       Next, let&apos;s take a look at the JSF view the user sees. As usual, we use a template to provide the sidebar and footer. This one lives in <b>WEB-INF/templates/default.xhtml</b>:
+ 57:       </description>
+ 58:       <subitem
+ 59:             label="We have a common &lt;head&gt; element, where we define styles and more. "
+ 60:             skip="true">
+ 61:         <command
+ 62:       required="false"
+ 63:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/webapp/WEB-INF/templates/default.xhtml,fromLine=22,toLine=26)"/>
+ 64:     </subitem>
+ 65:     <subitem
+ 66:             label="This application defines a common sidebar, putting them in the template means we only have to define them once."
+ 67:             skip="true">
+ 68:     <command
+ 69:       required="false"
+ 70:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/webapp/WEB-INF/templates/default.xhtml,fromLine=37,toLine=52)"/>
+ 71:     </subitem>
+ 72:     <subitem
+ 73:             label="and a common footer... "
+ 74:             skip="true">
+ 75:         <command
+ 76:       required="false"
+ 77:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/webapp/WEB-INF/templates/default.xhtml,fromLine=53,toLine=58)"/>
+ 78:     </subitem>
+ 79:     <subitem
+ 80:             label="The content is inserted here, and defined by views using this template. "
+ 81:             skip="true">
+ 82:         <command
+ 83:       required="false"
+ 84:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/webapp/WEB-INF/templates/default.xhtml,fromLine=32,toLine=36)"/>
+ 85:        </subitem>
+ 86:   </item>
+ 87:   <item
+ 88:       title="index.xhtml">
+ 89:       <description>
+ 90:       That leaves the main page, index.xhtml, in which we place the content unique to the main page:
+ 91:       </description>
+ 92:       <subitem
+ 93:             label="The JSF form allows us to register new users. There should be one already created when the application started."
+ 94:             skip="true">
+ 95:         <command
+ 96:       required="false"
+ 97:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/webapp/index.xhtml,fromLine=33,toLine=62)"/>
+ 98:     </subitem>
+ 99:     <subitem
+100:             label="The application uses Bean Validation to validate data entry. The error messages from Bean Validation are automatically attached to the relevant field by JSF, and adding a messages JSF component will display them."
+101:             skip="true">
+102:       </subitem>
+103:       <subitem
+104:             label="Name validation">
+105:     <command
+106:       required="false"
+107:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/webapp/index.xhtml,fromLine=39,toLine=40)"/>
+108:     </subitem>
+109:     <subitem
+110:             label="Email validation"
+111:             skip="true">
+112:     <command
+113:       required="false"
+114:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/webapp/index.xhtml,fromLine=43,toLine=44)"/>
+115:     </subitem>
+116:     <subitem
+117:             label="Phone number validation"
+118:             skip="true">
+119:     <command
+120:       required="false"
+121:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/webapp/index.xhtml,fromLine=47,toLine=49)"/>
+122:     </subitem>
+123:     <subitem
+124:             label="This application exposes REST endpoints for each registered member. The application helpfully displays the URL to the REST endpoint on this page. "
+125:             skip="true">
+126:     <command
+127:       required="false"
+128:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/webapp/index.xhtml,fromLine=86,toLine=90)"/>
+129:     </subitem>
+130:   </item>
+131:   <item
+132:         skip="true"
+133:         title="Member.java">
+134:      <description>
+135:        Next, let&apos;s take a look at the Member entity, before we look at how the application is wired together:
+136:     </description>
+137:     <subitem
+138:             label="As usual with JPA, we define that the class is an entity by adding @Entity"
+139:             skip="true">
+140:     <command
+141:       required="false"
+142:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/model/Member.java,fromLine=37)"/>
+143:   </subitem>
+144:   <subitem
+145:             label="Members are exposed as a RESTful service using JAX-RS. We can use JAXB to map the object to XML and to do this we need to add @XmlRootElement."
+146:             skip="true">
+147:     <command
+148:       required="false"
+149:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/model/Member.java,fromLine=38)"/>
+150:   </subitem>
+151:   <subitem
+152:             label="Bean Validation allows constraints to be defined once (on the entity) and applied everywhere. Here we constrain the person's name to a certain size and regular expression. "
+153:             skip="true">
+154:     <command
+155:       required="false"
+156:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/model/Member.java,fromLine=46,toLine=48)"/>
+157:   </subitem>
+158:   <subitem
+159:             label="Hibernate Validator also offers some extra validations such as @Email. "
+160:             skip="true">
+161:     <command
+162:       required="false"
+163:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/model/Member.java,fromLine=53,toLine=53)"/>
+164:   </subitem>
+165:   <subitem
+166:             label="@Digits, @NotNull and @Size are further examples of constraints. "
+167:             skip="true">
+168:     <command
+169:       required="false"
+170:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/model/Member.java,fromLine=56,toLine=58)"/>
+171:   </subitem>
+172:   </item>
+173:   <item
+174:         skip="true"
+175:         title="MemberRepository.java">
+176:      <description>
+177:        Let&apos;s take a look at MemberRepository, which is responsible for interactions with the persistence layer:
+178:     </description>
+179:     <subitem
+180:             label="The bean is application scoped, as it is a singleton."
+181:             skip="true">
+182:     <command
+183:       required="false"
+184:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/data/MemberRepository.java,fromLine=29)"/>
+185:   </subitem>
+186:   <subitem
+187:             label="The entity manager is injected, to allow interaction with JPA."
+188:             skip="true">
+189:     <command
+190:       required="false"
+191:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/data/MemberRepository.java,fromLine=32)"/>
+192:   </subitem>
+193:   <subitem
+194:             label="The JPA criteria api is used to load a member by his or her unique identifier, email address."
+195:             skip="true">
+196:     <command
+197:       required="false"
+198:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/data/MemberRepository.java,fromLine=40,toLine=47)"/>
+199:   </subitem>
+200:   <subitem
+201:             label="The criteria api can also be used to load lists of entities ."
+202:             skip="true">
+203:     <command
+204:       required="false"
+205:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/data/MemberRepository.java,fromLine=51,toLine=58)"/>
+206:   </subitem>
+207:   </item>
+208:    <item
+209:         skip="true"
+210:         title="MemberListProducer.java">
+211:      <description>
+212:        Next, let&apos;s take a look at MemberListProducer, which is responsible for building the list of members, ordered by name. It uses JPA 2 criteria to do this.
+213:     </description>
+214:     <subitem
+215:             label="This bean is request scoped, meaning that any fields (such as members) will be stored for the entire request."
+216:             skip="true">
+217:        <command
+218:       required="false"
+219:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/data/MemberListProducer.java,fromLine=30)"/>
+220:   </subitem>
+221:   <subitem
+222:             label="The MemberRepository is responsible for interactions with the persistence layer"
+223:             skip="true">
+224:        <command
+225:       required="false"
+226:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/data/MemberListProducer.java,fromLine=33,toLine=34)"/>
+227:   </subitem>
+228:   <subitem
+229:             label="The list of members is exposed as a producer method. It's also available via EL. "
+230:             skip="true">
+231:     <command
+232:       required="false"
+233:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/data/MemberListProducer.java,fromLine=40,toLine=41)"/>
+234:   </subitem>
+235:   <subitem
+236:             label="The observer method is notified whenever a member is created, removed, or updated. This allows us to refresh the list of members whenever they are needed. This is a good approach as it allows us to cache the list of members, but keep it up to date at the same time."
+237:             skip="true">
+238:     <command
+239:       required="false"
+240:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/data/MemberListProducer.java,fromLine=46,toLine=48)"/>
+241:   </subitem>
+242:   </item>
+243:   <item
+244:         skip="true"
+245:         title="MemberRegistration.java">
+246:      <description>
+247:        Let&apos;s now look at MemberRegistration, the class that allows us to create new members from the JSF page
+248:     </description>
+249:     <subitem
+250:             label="This bean requires transactions as it needs to write to the database. Making this an EJB gives us access to declarative transactions - much simpler than manual transaction control! "
+251:             skip="true">
+252:     <command
+253:       required="false"
+254:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/service/MemberRegistration.java,fromLine=28)"/>
+255:   </subitem>
+256:   <subitem
+257:             label="Here we inject a JDK logger, defined in the Resources class."
+258:             skip="true">
+259:     <command
+260:       required="false"
+261:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/service/MemberRegistration.java,fromLine=31)"/>
+262:   </subitem>
+263:   <subitem
+264:             label="An event is sent every time a member is updated. This allows other pieces of code (in this quickstart the member list is refreshed) to react to changes in the member list without any coupling to this class. "
+265:             skip="true">
+266:     <command
+267:       required="false"
+268:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/service/MemberRegistration.java,fromLine=43)"/>
+269:   </subitem>
+270:   </item>
+271:   <item
+272:         skip="true"
+273:         title="Resources.java">
+274:      <description>
+275:        Now, let's take a look at the Resources class, which provides resources such as the entity manager. CDI recommends using "resource producers", as we do in this example, to alias resources to CDI beans, allowing for a consistent style throughout our application:
+276:     </description>
+277:     <subitem
+278:             label="We use the 'resource producer' pattern, from CDI, to 'alias' the old fashioned @PersistenceContext injection of the entity manager to a CDI style injection. This allows us to use a consistent injection style (@Inject) throughout the application. "
+279:             skip="true">
+280:       <command
+281:       required="false"
+282:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/util/Resources.java,fromLine=43)"/>
+283:     </subitem>
+284:     <subitem
+285:             label="We expose a JDK logger for injection. In order to save a bit more boiler plate, we automatically set the logger category as the class name! "
+286:             skip="true">
+287:       <command
+288:       required="false"
+289:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/util/Resources.java,fromLine=47)"/>
+290:     </subitem>
+291:     <subitem
+292:             label="We expose the FacesContext via a producer method, which allows it to be injected. If we were adding tests, we could also then mock it out."
+293:             skip="true">
+294:       <command
+295:       required="false"
+296:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/util/Resources.java,fromLine=52)"/>
+297:     </subitem>
+298:     <subitem
+299:             label="If you want to define your own datasource, take a look at the Configuration Guide for Red Hat JBoss Enterprise Application Platform."
+300:             skip="true">
+301:     <command
+302:            required="false"
+303:            serialization="org.eclipse.ui.browser.openBrowser(url=https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/)"/>
+304:     </subitem>
+305:   </item>
+306:   <item
+307:         skip="true"
+308:         title="MemberController.java">
+309:      <description>
+310:        Of course, we need to allow JSF to interact with the services. The MemberController class is responsible for this:
+311:     </description>
+312:     <subitem
+313:             label="The MemberController class uses the @Model stereotype, which adds @Named and @RequestScoped to the class. "
+314:             skip="true">
+315:     <command
+316:       required="false"
+317:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/controller/MemberController.java,fromLine=34)"/>
+318:   </subitem>
+319:   <subitem
+320:             label="The FacesContext is injected, so that messages can be sent to the user."
+321:             skip="true">
+322:     <command
+323:       required="false"
+324:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/controller/MemberController.java,fromLine=37)"/>
+325:   </subitem>
+326:   <subitem
+327:             label="The MemberRegistration bean is injected, to allow the controller to interact with the database."
+328:             skip="true">
+329:     <command
+330:       required="false"
+331:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/controller/MemberController.java,fromLine=40)"/>
+332:   </subitem>
+333:   <subitem
+334:             label="The Member class is exposed using a named producer field, which allows access from JSF. Note that the named producer field has dependent scope, so every time it is injected, the field will be read "
+335:             skip="true">
+336:     <command
+337:       required="false"
+338:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/controller/MemberController.java,fromLine=43,toLine=45)"/>
+339:   </subitem>
+340:   <subitem
+341:             label="The @PostConstruct annotation causes a new member object to be placed in the newMember field when the bean is instantiated."
+342:             skip="true">
+343:     <command
+344:       required="false"
+345:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/controller/MemberController.java,fromLine=47)"/>
+346:   </subitem>
+347:   <subitem
+348:             label="When the register method is called, the newMember object is passed to the persistence service."
+349:             skip="true">
+350:     <command
+351:       required="false"
+352:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/controller/MemberController.java,fromLine=54)"/>
+353:   </subitem>
+354:   <subitem
+355:             label="We also send a message to the user, to give them feedback on their actions."
+356:             skip="true">
+357:     <command
+358:       required="false"
+359:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/controller/MemberController.java,fromLine=56)"/>
+360:   </subitem>
+361:   <subitem
+362:             label="Finally, we replace the newMember with a new object, thus blanking out the data the user has added so far. This works as the producer field is dependent scoped."
+363:             skip="true">
+364:     <command
+365:       required="false"
+366:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/controller/MemberController.java,fromLine=57)"/>
+367:   </subitem>
+368:   </item>
+369:   <item
+370:         skip="true"
+371:         title="JAX-RS">
+372:      <description>
+373:        Before we wrap up our tour of the kitchensink example application,
+374:        let&apos;s take a look at how the JAX-RS endpoints are created. Firstly, {<b>JaxRSActivator</b>}},
+375:        which extends <b>Application</b> and is annotated with <b>@ApplicationPath</b>,
+376:        is the Jakarta EE <b>no XML</b> approach to activating JAX-RS.
+377:     </description>
+378:     <subitem
+379:             label="JaxRsActivator.java"
+380:             skip="true">
+381:     <command
+382:       required="false"
+383:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/JaxRsActivator.java,fromLine=30, toLine=33)"/>
+384:   </subitem>
 385:   </item>
-386: 
-387:   <item
-388:         skip="true"
-389:         title="JAX-RS">
-390:      <description>
-391:        Before we wrap up our tour of the kitchensink example application,
-392:        let&apos;s take a look at how the JAX-RS endpoints are created. Firstly, {<b>JaxRSActivator</b>}},
-393:        which extends <b>Application</b> and is annotated with <b>@ApplicationPath</b>,
-394:        is the Jakarta EE <b>no XML</b> approach to activating JAX-RS.
-395:     </description>
-396:     <subitem
-397:             label="JaxRsActivator.java"
-398:             skip="true">
-399:     <command
-400:       required="false"
-401:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/JaxRsActivator.java,fromLine=30, toLine=33)"/>
-402:   </subitem>
-403: 
-404:   </item>
-405: 
-406:   <item
-407:         skip="true"
-408:         title="MemberResourceRESTService.java">
-409:      <description>
-410:        The real work goes in MemberResourceRESTService, which produces the endpoint:
-411:     </description>
-412:     <subitem
-413:             label="The @Path annotation tells JAX-RS that this class provides a REST endpoint mapped to rest/members (concatenating the path from the activator with the path for this endpoint). "
-414:             skip="true">
-415:     <command
-416:       required="false"
-417:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=52)"/>
-418:   </subitem>
-419:   <subitem
-420:             label="The bean is request scoped, as JAX-RS interactions typically don&apos;t hold state between requests."
-421:             skip="true">
-422:     <command
-423:       required="false"
-424:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=53)"/>
-425:   </subitem>
-426:   <subitem
-427:             label="JAX-RS endpoints are CDI enabled, and can use CDI-style injection. "
-428:             skip="true">
-429:     <command
-430:       required="false"
-431:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=56)"/>
-432:   </subitem>
-433:   <subitem
-434:             label="CDI allows us to inject a Bean Validation Validator instance, which is used to validate the POSTed member before it is persisted."
-435:             skip="true">
-436:     <command
-437:       required="false"
-438:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=59)"/>
-439:   </subitem>
-440:   <subitem
-441:             label="MemberRepository is injected to allow us to query the member database "
-442:             skip="true">
-443:     <command
-444:       required="false"
-445:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=62)"/>
-446:   </subitem>
-447:   <subitem
-448:             label="MemberRegistration is injected to allow us to alter the member database."
-449:             skip="true">
-450:     <command
-451:       required="false"
-452:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=65)"/>
-453:   </subitem>
-454:   <subitem
-455:             label="The listAllMembers() method is called when the raw endpoint is accessed and offers up a list of endpoints. Notice that the object is automatically marshalled to JSON by RESTEasy (the JAX-RS implementation included in Red Hat JBoss Enterprise Application Platform)."
-456:             skip="true">
-457:     <command
-458:       required="false"
-459:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=68,toLine=72)"/>
-460:   </subitem>
-461:   <subitem
-462:             label="The lookupMemberById() method is called when the endpoint is accessed with a member id parameter appended (for example rest/members/1). Again, the object is automatically marshalled to JSON by RESTEasy."
-463:             skip="true">
-464:     <command
-465:       required="false"
-466:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=74,toLine=83)"/>
-467:   </subitem>
-468:   <subitem
-469:             label="createMember() is called when a POST is performed on the URL. Once again, the object is automatically unmarshalled from JSON."
-470:             skip="true">
-471:     <command
-472:       required="false"
-473:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=89,toLine=120)"/>
-474:   </subitem>
-475:   <subitem
-476:             label="In order to ensure that the member is valid, we call the validateMember method, which validates the object, and adds any constraint violations to the response. These can then be handled on the client side, and displayed to the user."
-477:             skip="true">
-478:     <command
-479:       required="false"
-480:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=136,toLine=148)"/>
-481:   </subitem>
-482:   <subitem
-483:             label="The object is then passed to the MemberRegistration service to be persisted."
-484:             skip="true">
-485:     <command
-486:       required="false"
-487:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=100)"/>
-488:   </subitem>
-489:   <subitem
-490:             label="We then handle any remaining issues with validating the object, which are raised when the object is persisted."
-491:             skip="true">
-492:     <command
-493:       required="false"
-494:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=104,toLine=117)"/>
-495:   </subitem>
-496:   </item>
-497:   <item
-498:         skip="true"
-499:         title="Run and deploy the application">
-500:      <description>
-501:        Right-click the project and select <b>Run As</b> &gt; <b>Run On Server</b> or click on the &quot;Click to Perform&quot; link below.
-502:     </description>
-503:     <!-- the runOnServer command is not implemented yet
-504:     <command
-505:       required="false"
-506:       serialization="org.jboss.tools.project.examples.cheatsheet.actions.runOnServer(project=${currentProject})"/>
-507:   -->
-508:   <action
-509:     pluginId="org.jboss.tools.project.examples.cheatsheet"
-510:     class="org.jboss.tools.project.examples.cheatsheet.actions.RunOnServer"
-511:     param1="${currentProject}"/>
-512:   </item>
-513:   <item
-514:         skip="true"
-515:         title="Arquillian">
-516:      <description>
-517:        If you&apos;ve been following along with the Test Driven Development craze of the past few years,
-518:        you&apos;re probably getting a bit nervous by now, wondering how on earth you are going to test your application.
-519:        Lucky for you, the Arquillian project is here to help!
-520:     <br/><br/>
-521:     Arquillian provides all the boiler plate for running your test inside Red Hat JBoss Enterprise Application Platform,
-522:     allowing you to concentrate on testing your application.
-523:     In order to do that, it utilizes Shrinkwrap, a fluent API for defining packaging,
-524:     to create an archive to deploy.
-525:     We'll go through the testcase, and how you configure Arquillian in just a moment,
-526:     but first let's run the test.
-527: 
-528:     </description>
-529:   </item>
-530:   <item
-531:         skip="true"
-532:         title="Start Arquillian tests">
-533:     <description>
-534:       Arquillian defines two modes, managed and remote.
-535:       The managed mode will take care of starting and stopping the server for you,
-536:       while the remote mode connects to an already running server.
-537:       <br/><br/>
-538:       The following action starts the test in the <b>remote</b> mode because you have started the server in the previous step.
-539:     <br/>
-540:         Right-click the project, select <b>Properties&gt;Maven</b> and
-541:         enter <b>arq-remote</b> to the <b>Active Maven Profile</b> field.
-542:         After that, right-click the project and select <b>Run As&gt;JUnit test</b>.
-543:     </description>
-544:     <!-- the launchJUnitTest command is not implemented yey
-545:     <command
-546:       required="false"
-547:       serialization="org.jboss.tools.project.examples.cheatsheet.actions.launchJUnitTest(project=${currentProject}, activateProfile=arq-remote)"/>
-548:   -->
-549: 
-550:   <action
-551:       pluginId="org.jboss.tools.project.examples.cheatsheet"
-552:       class="org.jboss.tools.project.examples.cheatsheet.actions.LaunchJUnitTest"
-553:       param1="${currentProject}"
-554:         param2="arq-remote"/>
-555:   </item>
-556: 
-557:   <item
-558:         skip="true"
-559:         title="MemberRegistrationTest.java">
-560:     <description>
-561:       So far so good, the test is running. But what does the test look like?
-562:     </description>
-563:     <subitem
-564:             label="@RunWith(Arquillian.class) tells JUnit to hand control over to Arquillian when executing tests."
-565:             skip="true">
-566:     <command
-567:       required="false"
-568:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/test/java/org/jboss/as/quickstarts/kitchensink/test/MemberRegistrationTest.java,fromLine=37)"/>
-569:   </subitem>
-570:   <subitem
-571:             label="The @Deployment annotation identifies the createTestArchive static method to Arquillian as the one to use to determine which resources and classes to deploy "
-572:             skip="true">
-573:     <command
-574:       required="false"
-575:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/test/java/org/jboss/as/quickstarts/kitchensink/test/MemberRegistrationTest.java,fromLine=39)"/>
-576:   </subitem>
-577:   <subitem
-578:             label="We add just the classes needed for the test, no more "
-579:             skip="true">
-580:     <command
-581:       required="false"
-582:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/test/java/org/jboss/as/quickstarts/kitchensink/test/MemberRegistrationTest.java,fromLine=42)"/>
-583:   </subitem>
-584:   <subitem
-585:             label="We also add persistence.xml as our test is going to use the database "
-586:             skip="true">
-587:     <command
-588:       required="false"
-589:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/test/java/org/jboss/as/quickstarts/kitchensink/test/MemberRegistrationTest.java,fromLine=43)"/>
-590:   </subitem>
-591:   <subitem
-592:             label="Of course, we must add beans.xml to enable CDI."
-593:             skip="true">
-594:     <command
-595:       required="false"
-596:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/test/java/org/jboss/as/quickstarts/kitchensink/test/MemberRegistrationTest.java,fromLine=44)"/>
-597:   </subitem>
-598:   <subitem
-599:             label="Finally, we add a test datasource, so that test data doesn&apos;t overwrite production data."
-600:             skip="true">
-601:     <command
-602:       required="false"
-603:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/test/java/org/jboss/as/quickstarts/kitchensink/test/MemberRegistrationTest.java,fromLine=46)"/>
-604:   </subitem>
-605:   <subitem
-606:             label="Arquillian allows us to inject beans into the test case."
-607:             skip="true">
-608:     <command
-609:       required="false"
-610:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/test/java/org/jboss/as/quickstarts/kitchensink/test/MemberRegistrationTest.java,fromLine=49,toLine=50)"/>
-611:   </subitem>
-612:   <subitem
-613:             label="The test method works as you would expect - creates a new member, registers them, and then verifies that the member was created "
-614:             skip="true">
-615:     <command
-616:       required="false"
-617:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/test/java/org/jboss/as/quickstarts/kitchensink/test/MemberRegistrationTest.java,fromLine=55,toLine=64)"/>
-618:   </subitem>
-619: 
-620:   </item>
-621: 
-622:   <item
-623:         skip="true"
-624:         title="arquillian.xml">
-625:     <description>
-626:       As you can see, Arquillian has lived up to the promise - the test case is focused on what to test
-627:       (the @Deployment method) and how to test (the @Test method).
-628:       It&apos;s also worth noting that this isn&apos;t a simplistic unit test - this is a fully fledged integration
-629:        test that uses the database.
-630:     <br/><br/>
-631:     Now, let&apos;s look at how we configure Arquillian.
-632:     First of all, let&apos;s take a look at <b>arquillian.xml</b> in <b>src/test/resources</b>.
-633:     </description>
-634:     <subitem
-635:             label="Arquillian deploys the test war to JBoss EAP, and doesn't write it to disk. For debugging, it can be very useful to see exactly what is in your war, so Arquillian allows you to export the war when the tests runs "
-636:             skip="true">
-637:     <command
-638:       required="false"
-639:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/test/resources/arquillian.xml)"/>
-640:   </subitem>
-641:   </item>
-642: 
-643:     <item
-644:         skip="true"
-645:         title="pom.xml">
-646:     <description>
-647:       Now, we need to look at how we select between containers in the pom.xml:
+386:   <item
+387:         skip="true"
+388:         title="MemberResourceRESTService.java">
+389:      <description>
+390:        The real work goes in MemberResourceRESTService, which produces the endpoint:
+391:     </description>
+392:     <subitem
+393:             label="The @Path annotation tells JAX-RS that this class provides a REST endpoint mapped to rest/members (concatenating the path from the activator with the path for this endpoint). "
+394:             skip="true">
+395:     <command
+396:       required="false"
+397:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=52)"/>
+398:   </subitem>
+399:   <subitem
+400:             label="The bean is request scoped, as JAX-RS interactions typically don&apos;t hold state between requests."
+401:             skip="true">
+402:     <command
+403:       required="false"
+404:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=53)"/>
+405:   </subitem>
+406:   <subitem
+407:             label="JAX-RS endpoints are CDI enabled, and can use CDI-style injection. "
+408:             skip="true">
+409:     <command
+410:       required="false"
+411:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=56)"/>
+412:   </subitem>
+413:   <subitem
+414:             label="CDI allows us to inject a Bean Validation Validator instance, which is used to validate the POSTed member before it is persisted."
+415:             skip="true">
+416:     <command
+417:       required="false"
+418:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=59)"/>
+419:   </subitem>
+420:   <subitem
+421:             label="MemberRepository is injected to allow us to query the member database "
+422:             skip="true">
+423:     <command
+424:       required="false"
+425:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=62)"/>
+426:   </subitem>
+427:   <subitem
+428:             label="MemberRegistration is injected to allow us to alter the member database."
+429:             skip="true">
+430:     <command
+431:       required="false"
+432:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=65)"/>
+433:   </subitem>
+434:   <subitem
+435:             label="The listAllMembers() method is called when the raw endpoint is accessed and offers up a list of endpoints. Notice that the object is automatically marshalled to JSON by RESTEasy (the JAX-RS implementation included in Red Hat JBoss Enterprise Application Platform)."
+436:             skip="true">
+437:     <command
+438:       required="false"
+439:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=68,toLine=72)"/>
+440:   </subitem>
+441:   <subitem
+442:             label="The lookupMemberById() method is called when the endpoint is accessed with a member id parameter appended (for example rest/members/1). Again, the object is automatically marshalled to JSON by RESTEasy."
+443:             skip="true">
+444:     <command
+445:       required="false"
+446:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=74,toLine=83)"/>
+447:   </subitem>
+448:   <subitem
+449:             label="createMember() is called when a POST is performed on the URL. Once again, the object is automatically unmarshalled from JSON."
+450:             skip="true">
+451:     <command
+452:       required="false"
+453:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=89,toLine=120)"/>
+454:   </subitem>
+455:   <subitem
+456:             label="In order to ensure that the member is valid, we call the validateMember method, which validates the object, and adds any constraint violations to the response. These can then be handled on the client side, and displayed to the user."
+457:             skip="true">
+458:     <command
+459:       required="false"
+460:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=136,toLine=148)"/>
+461:   </subitem>
+462:   <subitem
+463:             label="The object is then passed to the MemberRegistration service to be persisted."
+464:             skip="true">
+465:     <command
+466:       required="false"
+467:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=100)"/>
+468:   </subitem>
+469:   <subitem
+470:             label="We then handle any remaining issues with validating the object, which are raised when the object is persisted."
+471:             skip="true">
+472:     <command
+473:       required="false"
+474:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java,fromLine=104,toLine=117)"/>
+475:   </subitem>
+476:   </item>
+477:   <item
+478:         skip="true"
+479:         title="Run and deploy the application">
+480:      <description>
+481:        Right-click the project and select <b>Run As</b> &gt; <b>Run On Server</b> or click on the &quot;Click to Perform&quot; link below.
+482:     </description>
+483:     <!-- the runOnServer command is not implemented yet
+484:     <command
+485:       required="false"
+486:       serialization="org.jboss.tools.project.examples.cheatsheet.actions.runOnServer(project=${currentProject})"/>
+487:   -->
+488:   <action
+489:     pluginId="org.jboss.tools.project.examples.cheatsheet"
+490:     class="org.jboss.tools.project.examples.cheatsheet.actions.RunOnServer"
+491:     param1="${currentProject}"/>
+492:   </item>
+493:   <item
+494:         skip="true"
+495:         title="Arquillian">
+496:      <description>
+497:        If you&apos;ve been following along with the Test Driven Development craze of the past few years,
+498:        you&apos;re probably getting a bit nervous by now, wondering how on earth you are going to test your application.
+499:        Lucky for you, the Arquillian project is here to help!
+500:     <br/><br/>
+501:     Arquillian provides all the boiler plate for running your test inside Red Hat JBoss Enterprise Application Platform,
+502:     allowing you to concentrate on testing your application.
+503:     In order to do that, it utilizes Shrinkwrap, a fluent API for defining packaging,
+504:     to create an archive to deploy.
+505:     We'll go through the testcase, and how you configure Arquillian in just a moment,
+506:     but first let's run the test.
+507:     </description>
+508:   </item>
+509:   <item
+510:         skip="true"
+511:         title="Start Arquillian tests">
+512:     <description>
+513:       Arquillian defines two modes, managed and remote.
+514:       The managed mode will take care of starting and stopping the server for you,
+515:       while the remote mode connects to an already running server.
+516:       <br/><br/>
+517:       The following action starts the test in the <b>remote</b> mode because you have started the server in the previous step.
+518:     <br/>
+519:         Right-click the project, select <b>Properties&gt;Maven</b> and
+520:         enter <b>arq-remote</b> to the <b>Active Maven Profile</b> field.
+521:         After that, right-click the project and select <b>Run As&gt;JUnit test</b>.
+522:     </description>
+523:     <!-- the launchJUnitTest command is not implemented yey
+524:     <command
+525:       required="false"
+526:       serialization="org.jboss.tools.project.examples.cheatsheet.actions.launchJUnitTest(project=${currentProject}, activateProfile=arq-remote)"/>
+527:   -->
+528:   <action
+529:       pluginId="org.jboss.tools.project.examples.cheatsheet"
+530:       class="org.jboss.tools.project.examples.cheatsheet.actions.LaunchJUnitTest"
+531:       param1="${currentProject}"
+532:         param2="arq-remote"/>
+533:   </item>
+534:   <item
+535:         skip="true"
+536:         title="MemberRegistrationTest.java">
+537:     <description>
+538:       So far so good, the test is running. But what does the test look like?
+539:     </description>
+540:     <subitem
+541:             label="@RunWith(Arquillian.class) tells JUnit to hand control over to Arquillian when executing tests."
+542:             skip="true">
+543:     <command
+544:       required="false"
+545:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/test/java/org/jboss/as/quickstarts/kitchensink/test/MemberRegistrationTest.java,fromLine=37)"/>
+546:   </subitem>
+547:   <subitem
+548:             label="The @Deployment annotation identifies the createTestArchive static method to Arquillian as the one to use to determine which resources and classes to deploy "
+549:             skip="true">
+550:     <command
+551:       required="false"
+552:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/test/java/org/jboss/as/quickstarts/kitchensink/test/MemberRegistrationTest.java,fromLine=39)"/>
+553:   </subitem>
+554:   <subitem
+555:             label="We add just the classes needed for the test, no more "
+556:             skip="true">
+557:     <command
+558:       required="false"
+559:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/test/java/org/jboss/as/quickstarts/kitchensink/test/MemberRegistrationTest.java,fromLine=42)"/>
+560:   </subitem>
+561:   <subitem
+562:             label="We also add persistence.xml as our test is going to use the database "
+563:             skip="true">
+564:     <command
+565:       required="false"
+566:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/test/java/org/jboss/as/quickstarts/kitchensink/test/MemberRegistrationTest.java,fromLine=43)"/>
+567:   </subitem>
+568:   <subitem
+569:             label="Of course, we must add beans.xml to enable CDI."
+570:             skip="true">
+571:     <command
+572:       required="false"
+573:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/test/java/org/jboss/as/quickstarts/kitchensink/test/MemberRegistrationTest.java,fromLine=44)"/>
+574:   </subitem>
+575:   <subitem
+576:             label="Finally, we add a test datasource, so that test data doesn&apos;t overwrite production data."
+577:             skip="true">
+578:     <command
+579:       required="false"
+580:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/test/java/org/jboss/as/quickstarts/kitchensink/test/MemberRegistrationTest.java,fromLine=46)"/>
+581:   </subitem>
+582:   <subitem
+583:             label="Arquillian allows us to inject beans into the test case."
+584:             skip="true">
+585:     <command
+586:       required="false"
+587:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/test/java/org/jboss/as/quickstarts/kitchensink/test/MemberRegistrationTest.java,fromLine=49,toLine=50)"/>
+588:   </subitem>
+589:   <subitem
+590:             label="The test method works as you would expect - creates a new member, registers them, and then verifies that the member was created "
+591:             skip="true">
+592:     <command
+593:       required="false"
+594:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/test/java/org/jboss/as/quickstarts/kitchensink/test/MemberRegistrationTest.java,fromLine=55,toLine=64)"/>
+595:   </subitem>
+596:   </item>
+597:   <item
+598:         skip="true"
+599:         title="arquillian.xml">
+600:     <description>
+601:       As you can see, Arquillian has lived up to the promise - the test case is focused on what to test
+602:       (the @Deployment method) and how to test (the @Test method).
+603:       It&apos;s also worth noting that this isn&apos;t a simplistic unit test - this is a fully fledged integration
+604:        test that uses the database.
+605:     <br/><br/>
+606:     Now, let&apos;s look at how we configure Arquillian.
+607:     First of all, let&apos;s take a look at <b>arquillian.xml</b> in <b>src/test/resources</b>.
+608:     </description>
+609:     <subitem
+610:             label="Arquillian deploys the test war to JBoss EAP, and doesn't write it to disk. For debugging, it can be very useful to see exactly what is in your war, so Arquillian allows you to export the war when the tests runs "
+611:             skip="true">
+612:     <command
+613:       required="false"
+614:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/src/test/resources/arquillian.xml)"/>
+615:   </subitem>
+616:   </item>
+617:     <item
+618:         skip="true"
+619:         title="pom.xml">
+620:     <description>
+621:       Now, we need to look at how we select between containers in the pom.xml:
+622:     </description>
+623:     <subitem
+624:             label="The profile needs an id so we can activate from Eclipse or the command line "
+625:             skip="true">
+626:     <command
+627:       required="false"
+628:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/pom.xml,fromLine=238,toLine=314)"/>
+629:   </subitem>
+630:   <subitem
+631:             label="Arquillian decides which container to use depending on your classpath. Here we define the remote JBoss EAP container. "
+632:             skip="true">
+633:     <command
+634:       required="false"
+635:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/pom.xml,fromLine=277,toLine=289)"/>
+636:   </subitem>
+637:   </item>
+638:   <item
+639:         skip="true"
+640:         title="Arquillian project page">
+641:      <description>
+642:       And that&apos;s it! As you can see Arquillian delivers simple and true testing.
+643:       You can concentrate on writing your test functionality, and run your tests in the same environment in which you will run your application.
+644:       <br/><br/>
+645:       Arquillian also offers other containers, allowing you to run your tests against Weld Embedded (super fast, but your enterprise services are mocked), GlassFish, and more.
+646:       <br/><br/>
+647:       More info on Arquillian you can find on the Arquillian project page.
 648:     </description>
-649:     <subitem
-650:             label="The profile needs an id so we can activate from Eclipse or the command line "
-651:             skip="true">
-652:     <command
-653:       required="false"
-654:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/pom.xml,fromLine=238,toLine=314)"/>
-655:   </subitem>
-656:   <subitem
-657:             label="Arquillian decides which container to use depending on your classpath. Here we define the remote JBoss EAP container. "
-658:             skip="true">
-659:     <command
-660:       required="false"
-661:       serialization="org.jboss.tools.project.examples.cheatsheet.openFileInEditor(path=/${currentProject}/pom.xml,fromLine=277,toLine=289)"/>
-662:   </subitem>
-663: 
-664:   </item>
-665:   <item
-666:         skip="true"
-667:         title="Arquillian project page">
-668:      <description>
-669:       And that&apos;s it! As you can see Arquillian delivers simple and true testing.
-670:       You can concentrate on writing your test functionality, and run your tests in the same environment in which you will run your application.
-671:       <br/><br/>
-672:       Arquillian also offers other containers, allowing you to run your tests against Weld Embedded (super fast, but your enterprise services are mocked), GlassFish, and more.
-673:       <br/><br/>
-674:       More info on Arquillian you can find on the Arquillian project page.
-675:     </description>
-676:     <command
-677:            required="false"
-678:            serialization="org.eclipse.ui.browser.openBrowser(url=http://www.jboss.org/arquillian)"/>
-679:   </item>
-680: 
-681:   <item
-682:         skip="true"
-683:         title="Creating your own application ">
-684:      <description>
-685:       What we didn&apos;t tell you about the <b>Kitchensink quickstart</b> is that it is generated from a Maven archetype.
-686:       Using this archetype offers you the perfect opportunity to generate your own project.
-687:       <br/><br/>
-688:       In order to perform that, you should select <b>Help&gt;Red Hat Central</b> and click the <b>Jakarta EE Web Project</b> wizard.
-689:       <br/>
-690:       You will get a brand new project with the same functionality as <b>kitchensink</b>,
-691:       but customized with your details.
-692:     </description>
-693:   </item>
-694: 
-695: </cheatsheet>
+649:     <command
+650:            required="false"
+651:            serialization="org.eclipse.ui.browser.openBrowser(url=http://www.jboss.org/arquillian)"/>
+652:   </item>
+653:   <item
+654:         skip="true"
+655:         title="Creating your own application ">
+656:      <description>
+657:       What we didn&apos;t tell you about the <b>Kitchensink quickstart</b> is that it is generated from a Maven archetype.
+658:       Using this archetype offers you the perfect opportunity to generate your own project.
+659:       <br/><br/>
+660:       In order to perform that, you should select <b>Help&gt;Red Hat Central</b> and click the <b>Jakarta EE Web Project</b> wizard.
+661:       <br/>
+662:       You will get a brand new project with the same functionality as <b>kitchensink</b>,
+663:       but customized with your details.
+664:     </description>
+665:   </item>
+666: </cheatsheet>
 ```
 
-## File: pom.xml
+## File: legacy/pom.xml
 ```xml
   1: <?xml version="1.0" encoding="UTF-8"?>
   2: <!--
@@ -2280,341 +2126,316 @@ README.html
   4:     Copyright 2015, Red Hat, Inc. and/or its affiliates, and individual
   5:     contributors by the @authors tag. See the copyright.txt in the
   6:     distribution for a full listing of individual contributors.
-  7: 
-  8:     Licensed under the Apache License, Version 2.0 (the "License");
-  9:     you may not use this file except in compliance with the License.
- 10:     You may obtain a copy of the License at
- 11:     http://www.apache.org/licenses/LICENSE-2.0
- 12:     Unless required by applicable law or agreed to in writing, software
- 13:     distributed under the License is distributed on an "AS IS" BASIS,
- 14:     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- 15:     See the License for the specific language governing permissions and
- 16:     limitations under the License.
- 17: -->
- 18: <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- 19:          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
- 20:     <modelVersion>4.0.0</modelVersion>
- 21:     <parent>
- 22:         <groupId>org.jboss.eap.quickstarts</groupId>
- 23:         <artifactId>jboss-eap-quickstart-parent</artifactId>
- 24:         <!--
- 25:         Maintain separation between the artifact id and the version to help prevent
- 26:         merge conflicts between commits changing the GA and those changing the V.
- 27:         -->
- 28:         <version>6.0.0.redhat-00001</version>
- 29:         <relativePath/>
- 30:     </parent>
- 31:     <artifactId>kitchensink</artifactId>
- 32:     <version>8.0.0.GA</version>
- 33:     <packaging>war</packaging>
- 34:     <name>Quickstart: kitchensink</name>
- 35:     <description>A starter Jakarta EE web application project for use in JBoss EAP</description>
- 36: 
- 37:     <licenses>
- 38:         <license>
- 39:             <name>Apache License, Version 2.0</name>
- 40:             <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
- 41:             <distribution>repo</distribution>
- 42:         </license>
- 43:     </licenses>
- 44: 
- 45:     <properties>
- 46:         <!-- The versions for BOMs, Dependencies and Plugins -->
- 47:         <version.server.bom>8.0.0.GA-redhat-00009</version.server.bom>
- 48:         <version.eap.maven.plugin>1.0.0.Final-redhat-00014</version.eap.maven.plugin>
- 49:     </properties>
- 50: 
- 51:     <repositories>
- 52:         <!-- keep this repository the first -->
- 53:         <repository>
- 54:             <id>jboss-public-maven-repository</id>
- 55:             <name>JBoss Public Maven Repository</name>
- 56:             <url>https://repository.jboss.org/nexus/content/groups/public/</url>
- 57:             <releases>
+  7:     Licensed under the Apache License, Version 2.0 (the "License");
+  8:     you may not use this file except in compliance with the License.
+  9:     You may obtain a copy of the License at
+ 10:     http://www.apache.org/licenses/LICENSE-2.0
+ 11:     Unless required by applicable law or agreed to in writing, software
+ 12:     distributed under the License is distributed on an "AS IS" BASIS,
+ 13:     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ 14:     See the License for the specific language governing permissions and
+ 15:     limitations under the License.
+ 16: -->
+ 17: <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ 18:          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+ 19:     <modelVersion>4.0.0</modelVersion>
+ 20:     <parent>
+ 21:         <groupId>org.jboss.eap.quickstarts</groupId>
+ 22:         <artifactId>jboss-eap-quickstart-parent</artifactId>
+ 23:         <!--
+ 24:         Maintain separation between the artifact id and the version to help prevent
+ 25:         merge conflicts between commits changing the GA and those changing the V.
+ 26:         -->
+ 27:         <version>6.0.0.redhat-00001</version>
+ 28:         <relativePath/>
+ 29:     </parent>
+ 30:     <artifactId>kitchensink</artifactId>
+ 31:     <version>8.0.0.GA</version>
+ 32:     <packaging>war</packaging>
+ 33:     <name>Quickstart: kitchensink</name>
+ 34:     <description>A starter Jakarta EE web application project for use in JBoss EAP</description>
+ 35:     <licenses>
+ 36:         <license>
+ 37:             <name>Apache License, Version 2.0</name>
+ 38:             <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+ 39:             <distribution>repo</distribution>
+ 40:         </license>
+ 41:     </licenses>
+ 42:     <properties>
+ 43:         <!-- The versions for BOMs, Dependencies and Plugins -->
+ 44:         <version.server.bom>8.0.0.GA-redhat-00009</version.server.bom>
+ 45:         <version.eap.maven.plugin>1.0.0.Final-redhat-00014</version.eap.maven.plugin>
+ 46:     </properties>
+ 47:     <repositories>
+ 48:         <!-- keep this repository the first -->
+ 49:         <repository>
+ 50:             <id>jboss-public-maven-repository</id>
+ 51:             <name>JBoss Public Maven Repository</name>
+ 52:             <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+ 53:             <releases>
+ 54:                 <enabled>true</enabled>
+ 55:                 <updatePolicy>never</updatePolicy>
+ 56:             </releases>
+ 57:             <snapshots>
  58:                 <enabled>true</enabled>
  59:                 <updatePolicy>never</updatePolicy>
- 60:             </releases>
- 61:             <snapshots>
- 62:                 <enabled>true</enabled>
- 63:                 <updatePolicy>never</updatePolicy>
- 64:             </snapshots>
- 65:             <layout>default</layout>
- 66:         </repository>
- 67:         <repository>
- 68:             <id>redhat-ga-maven-repository</id>
- 69:             <name>Red Hat GA Maven Repository</name>
- 70:             <url>https://maven.repository.redhat.com/ga/</url>
- 71:             <releases>
+ 60:             </snapshots>
+ 61:             <layout>default</layout>
+ 62:         </repository>
+ 63:         <repository>
+ 64:             <id>redhat-ga-maven-repository</id>
+ 65:             <name>Red Hat GA Maven Repository</name>
+ 66:             <url>https://maven.repository.redhat.com/ga/</url>
+ 67:             <releases>
+ 68:                 <enabled>true</enabled>
+ 69:                 <updatePolicy>never</updatePolicy>
+ 70:             </releases>
+ 71:             <snapshots>
  72:                 <enabled>true</enabled>
  73:                 <updatePolicy>never</updatePolicy>
- 74:             </releases>
- 75:             <snapshots>
- 76:                 <enabled>true</enabled>
- 77:                 <updatePolicy>never</updatePolicy>
- 78:             </snapshots>
- 79:             <layout>default</layout>
- 80:         </repository>
- 81:     </repositories>
- 82:     <pluginRepositories>
- 83:         <!-- keep this repository the first -->
- 84:         <pluginRepository>
- 85:             <id>jboss-public-maven-repository</id>
- 86:             <name>JBoss Public Maven Repository</name>
- 87:             <url>https://repository.jboss.org/nexus/content/groups/public/</url>
- 88:             <releases>
- 89:                 <enabled>true</enabled>
- 90:             </releases>
- 91:             <snapshots>
- 92:                 <enabled>true</enabled>
- 93:             </snapshots>
- 94:         </pluginRepository>
- 95:         <pluginRepository>
- 96:             <id>redhat-ga-maven-repository</id>
- 97:             <name>Red Hat GA Maven Repository</name>
- 98:             <url>https://maven.repository.redhat.com/ga/</url>
- 99:             <releases>
-100:                 <enabled>true</enabled>
-101:             </releases>
-102:             <snapshots>
-103:                 <enabled>true</enabled>
-104:             </snapshots>
-105:         </pluginRepository>
-106:     </pluginRepositories>
-107: 
-108:     <dependencyManagement>
-109:         <dependencies>
-110:             <!-- importing the ee-with-tools BOM adds specs and other useful artifacts as managed dependencies -->
-111:             <dependency>
-112:                 <groupId>org.jboss.bom</groupId>
-113:                 <artifactId>jboss-eap-ee-with-tools</artifactId>
-114:                 <version>${version.server.bom}</version>
-115:                 <type>pom</type>
-116:                 <scope>import</scope>
-117:             </dependency>
-118:         </dependencies>
-119:     </dependencyManagement>
-120: 
-121:     <dependencies>
-122: 
-123:         <!-- First declare the APIs we depend on and need for compilation. All
-124:         of them are provided by JBoss EAP -->
-125: 
-126:         <!-- Import the CDI API, we use provided scope as the API is included in
-127:         JBoss EAP -->
-128:         <dependency>
-129:             <groupId>jakarta.enterprise</groupId>
-130:             <artifactId>jakarta.enterprise.cdi-api</artifactId>
-131:             <scope>provided</scope>
-132:         </dependency>
-133: 
-134:         <!-- Needed for running tests (you may also use TestNG) -->
-135:         <dependency>
-136:             <groupId>junit</groupId>
-137:             <artifactId>junit</artifactId>
-138:             <scope>test</scope>
-139:         </dependency>
-140: 
-141:         <!-- Now we declare any tools needed -->
-142: 
-143:         <!-- Annotation processor to generate the JPA metamodel classes for
-144:         typesafe criteria queries -->
-145:         <dependency>
-146:             <groupId>org.hibernate.orm</groupId>
-147:             <artifactId>hibernate-jpamodelgen</artifactId>
-148:             <scope>provided</scope>
-149:         </dependency>
-150:         <!-- Jakarta Activation needed for JPA model generation -->
-151:         <dependency>
-152:             <groupId>jakarta.activation</groupId>
-153:             <artifactId>jakarta.activation-api</artifactId>
-154:             <scope>provided</scope>
-155:         </dependency>
-156: 
-157:         <!-- Bean Validation Implementation 
-158:         Provides portable constraints such as @Email 
-159:         Hibernate Validator is shipped in JBoss EAP -->
-160:         <dependency>
-161:             <groupId>org.hibernate.validator</groupId>
-162:             <artifactId>hibernate-validator</artifactId>
-163:             <scope>provided</scope>
-164:         </dependency>
-165:         <!-- hibernate-validator dependencies excluded on server dependency management yet required -->
-166:         <dependency>
-167:             <groupId>jakarta.validation</groupId>
-168:             <artifactId>jakarta.validation-api</artifactId>
-169:             <scope>provided</scope>
-170:         </dependency>
-171: 
-172:         <!-- Annotation processor that raising compilation errors whenever constraint
-173:         annotations are incorrectly used. -->
-174:         <dependency>
-175:             <groupId>org.hibernate.validator</groupId>
-176:             <artifactId>hibernate-validator-annotation-processor</artifactId>
-177:             <scope>provided</scope>
-178:         </dependency>
-179: 
-180:         <!-- Import the JPA API, we use provided scope as the API is included in
-181:         JBoss EAP -->
-182:         <dependency>
-183:             <groupId>jakarta.persistence</groupId>
-184:             <artifactId>jakarta.persistence-api</artifactId>
-185:             <scope>provided</scope>
-186:         </dependency>
-187: 
-188:         <!-- Optional, but highly recommended -->
-189:         <!-- Arquillian allows you to test enterprise code such as EJBs and Transactional(JTA)
-190:         JPA from JUnit/TestNG -->
-191:         <dependency>
-192:             <groupId>org.jboss.arquillian.junit</groupId>
-193:             <artifactId>arquillian-junit-container</artifactId>
-194:             <scope>test</scope>
-195:         </dependency>
-196: 
-197:         <dependency>
-198:             <groupId>org.jboss.arquillian.protocol</groupId>
-199:             <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
-200:             <scope>test</scope>
-201:         </dependency>
-202: 
-203:         <!-- Import the Common Annotations API (JSR-250), we use provided scope
-204:         as the API is included in JBoss EAP -->
-205:         <dependency>
-206:             <groupId>jakarta.annotation</groupId>
-207:             <artifactId>jakarta.annotation-api</artifactId>
-208:             <scope>provided</scope>
-209:         </dependency>
-210: 
-211:         <!-- Import the EJB API, we use provided scope as the API is included in
-212:         JBoss EAP -->
-213:         <dependency>
-214:             <groupId>jakarta.ejb</groupId>
-215:             <artifactId>jakarta.ejb-api</artifactId>
-216:             <scope>provided</scope>
-217:         </dependency>
-218: 
-219:         <!-- Import the JSF API, we use provided scope as the API is included in
-220:         JBoss EAP -->
-221:         <dependency>
-222:             <groupId>jakarta.faces</groupId>
-223:             <artifactId>jakarta.faces-api</artifactId>
-224:             <scope>provided</scope>
-225:         </dependency>
-226: 
-227:         <!-- Import the JAX-RS API, we use provided scope as the API is included
-228:         in JBoss EAP -->
-229:         <dependency>
-230:             <groupId>jakarta.ws.rs</groupId>
-231:             <artifactId>jakarta.ws.rs-api</artifactId>
-232:             <scope>provided</scope>
-233:         </dependency>
-234: 
-235:         <dependency>
-236:             <groupId>jakarta.xml.bind</groupId>
-237:             <artifactId>jakarta.xml.bind-api</artifactId>
-238:             <scope>provided</scope>
-239:         </dependency>
-240:         
-241:         <dependency>
-242:             <groupId>jakarta.json</groupId>
-243:             <artifactId>jakarta.json-api</artifactId>
-244:             <scope>test</scope>
-245:         </dependency>
-246:         <dependency>
-247:             <groupId>org.eclipse.parsson</groupId>
-248:             <artifactId>parsson</artifactId>
-249:             <scope>test</scope>
-250:         </dependency>
-251: 
-252:     </dependencies>
-253: 
-254:     <profiles>
-255:         <profile>
-256:             <!-- An optional Arquillian testing profile that executes tests in a remote JBoss EAP instance.
-257:             Run with: mvn clean verify -Parq-remote -->
-258:             <id>arq-remote</id>
-259:             <dependencies>
-260:                 <dependency>
-261:                     <groupId>org.wildfly.arquillian</groupId>
-262:                     <artifactId>wildfly-arquillian-container-remote</artifactId>
-263:                     <scope>test</scope>
-264:                 </dependency>
-265:             </dependencies>
-266:             <build>
-267:                 <plugins>
-268:                     <plugin>
-269:                         <groupId>org.apache.maven.plugins</groupId>
-270:                         <artifactId>maven-failsafe-plugin</artifactId>
-271:                         <version>${version.failsafe.plugin}</version>
-272:                         <configuration>
-273:                             <includes>
-274:                                 <include>**/RemoteMemberRegistrationIT</include>
-275:                             </includes>
-276:                             <excludes>
-277:                                 <exclude>**/MemberRegistrationIT</exclude>
-278:                             </excludes>
-279:                         </configuration>
-280:                         <executions>
-281:                             <execution>
-282:                                 <goals>
-283:                                     <goal>integration-test</goal>
-284:                                     <goal>verify</goal>
-285:                                 </goals>
-286:                             </execution>
-287:                         </executions>
-288:                     </plugin>
-289:                 </plugins>
-290:             </build>
-291:         </profile>
-292:         <profile>
-293:             <id>openshift</id>
-294:             <build>
-295:                 <plugins>
-296:                     <plugin>
-297:                         <groupId>org.jboss.eap.plugins</groupId>
-298:                         <artifactId>eap-maven-plugin</artifactId>
-299:                         <version>${version.eap.maven.plugin}</version>
-300:                         <configuration>
-301:                             <channels>
-302:                                 <channel>
-303:                                     <manifest>
-304:                                         <groupId>org.jboss.eap.channels</groupId>
-305:                                         <artifactId>eap-8.0</artifactId>
-306:                                     </manifest>
-307:                                 </channel>
-308:                             </channels>
-309:                             <feature-packs>
-310:                                 <feature-pack>
-311:                                     <location>org.jboss.eap:wildfly-ee-galleon-pack</location>
-312:                                 </feature-pack>
-313:                                 <feature-pack>
-314:                                     <location>org.jboss.eap.cloud:eap-cloud-galleon-pack</location>
-315:                                 </feature-pack>
-316:                             </feature-packs>
-317:                             <layers>
-318:                                 <layer>cloud-server</layer>
-319:                                 <layer>h2-driver</layer>
-320:                                 <layer>ejb</layer>
-321:                                 <layer>jsf</layer>
-322:                             </layers>
-323:                             <filename>ROOT.war</filename>
-324:                         </configuration>
-325:                         <executions>
-326:                             <execution>
-327:                                 <goals>
-328:                                     <goal>package</goal>
-329:                                 </goals>
-330:                             </execution>
-331:                         </executions>
-332:                     </plugin>
-333:                 </plugins>
-334:             </build>
-335:         </profile>
-336:     </profiles>
-337: 
-338: </project>
+ 74:             </snapshots>
+ 75:             <layout>default</layout>
+ 76:         </repository>
+ 77:     </repositories>
+ 78:     <pluginRepositories>
+ 79:         <!-- keep this repository the first -->
+ 80:         <pluginRepository>
+ 81:             <id>jboss-public-maven-repository</id>
+ 82:             <name>JBoss Public Maven Repository</name>
+ 83:             <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+ 84:             <releases>
+ 85:                 <enabled>true</enabled>
+ 86:             </releases>
+ 87:             <snapshots>
+ 88:                 <enabled>true</enabled>
+ 89:             </snapshots>
+ 90:         </pluginRepository>
+ 91:         <pluginRepository>
+ 92:             <id>redhat-ga-maven-repository</id>
+ 93:             <name>Red Hat GA Maven Repository</name>
+ 94:             <url>https://maven.repository.redhat.com/ga/</url>
+ 95:             <releases>
+ 96:                 <enabled>true</enabled>
+ 97:             </releases>
+ 98:             <snapshots>
+ 99:                 <enabled>true</enabled>
+100:             </snapshots>
+101:         </pluginRepository>
+102:     </pluginRepositories>
+103:     <dependencyManagement>
+104:         <dependencies>
+105:             <!-- importing the ee-with-tools BOM adds specs and other useful artifacts as managed dependencies -->
+106:             <dependency>
+107:                 <groupId>org.jboss.bom</groupId>
+108:                 <artifactId>jboss-eap-ee-with-tools</artifactId>
+109:                 <version>${version.server.bom}</version>
+110:                 <type>pom</type>
+111:                 <scope>import</scope>
+112:             </dependency>
+113:         </dependencies>
+114:     </dependencyManagement>
+115:     <dependencies>
+116:         <!-- First declare the APIs we depend on and need for compilation. All
+117:         of them are provided by JBoss EAP -->
+118:         <!-- Import the CDI API, we use provided scope as the API is included in
+119:         JBoss EAP -->
+120:         <dependency>
+121:             <groupId>jakarta.enterprise</groupId>
+122:             <artifactId>jakarta.enterprise.cdi-api</artifactId>
+123:             <scope>provided</scope>
+124:         </dependency>
+125:         <!-- Needed for running tests (you may also use TestNG) -->
+126:         <dependency>
+127:             <groupId>junit</groupId>
+128:             <artifactId>junit</artifactId>
+129:             <scope>test</scope>
+130:         </dependency>
+131:         <!-- Now we declare any tools needed -->
+132:         <!-- Annotation processor to generate the JPA metamodel classes for
+133:         typesafe criteria queries -->
+134:         <dependency>
+135:             <groupId>org.hibernate.orm</groupId>
+136:             <artifactId>hibernate-jpamodelgen</artifactId>
+137:             <scope>provided</scope>
+138:         </dependency>
+139:         <!-- Jakarta Activation needed for JPA model generation -->
+140:         <dependency>
+141:             <groupId>jakarta.activation</groupId>
+142:             <artifactId>jakarta.activation-api</artifactId>
+143:             <scope>provided</scope>
+144:         </dependency>
+145:         <!-- Bean Validation Implementation 
+146:         Provides portable constraints such as @Email 
+147:         Hibernate Validator is shipped in JBoss EAP -->
+148:         <dependency>
+149:             <groupId>org.hibernate.validator</groupId>
+150:             <artifactId>hibernate-validator</artifactId>
+151:             <scope>provided</scope>
+152:         </dependency>
+153:         <!-- hibernate-validator dependencies excluded on server dependency management yet required -->
+154:         <dependency>
+155:             <groupId>jakarta.validation</groupId>
+156:             <artifactId>jakarta.validation-api</artifactId>
+157:             <scope>provided</scope>
+158:         </dependency>
+159:         <!-- Annotation processor that raising compilation errors whenever constraint
+160:         annotations are incorrectly used. -->
+161:         <dependency>
+162:             <groupId>org.hibernate.validator</groupId>
+163:             <artifactId>hibernate-validator-annotation-processor</artifactId>
+164:             <scope>provided</scope>
+165:         </dependency>
+166:         <!-- Import the JPA API, we use provided scope as the API is included in
+167:         JBoss EAP -->
+168:         <dependency>
+169:             <groupId>jakarta.persistence</groupId>
+170:             <artifactId>jakarta.persistence-api</artifactId>
+171:             <scope>provided</scope>
+172:         </dependency>
+173:         <!-- Optional, but highly recommended -->
+174:         <!-- Arquillian allows you to test enterprise code such as EJBs and Transactional(JTA)
+175:         JPA from JUnit/TestNG -->
+176:         <dependency>
+177:             <groupId>org.jboss.arquillian.junit</groupId>
+178:             <artifactId>arquillian-junit-container</artifactId>
+179:             <scope>test</scope>
+180:         </dependency>
+181:         <dependency>
+182:             <groupId>org.jboss.arquillian.protocol</groupId>
+183:             <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
+184:             <scope>test</scope>
+185:         </dependency>
+186:         <!-- Import the Common Annotations API (JSR-250), we use provided scope
+187:         as the API is included in JBoss EAP -->
+188:         <dependency>
+189:             <groupId>jakarta.annotation</groupId>
+190:             <artifactId>jakarta.annotation-api</artifactId>
+191:             <scope>provided</scope>
+192:         </dependency>
+193:         <!-- Import the EJB API, we use provided scope as the API is included in
+194:         JBoss EAP -->
+195:         <dependency>
+196:             <groupId>jakarta.ejb</groupId>
+197:             <artifactId>jakarta.ejb-api</artifactId>
+198:             <scope>provided</scope>
+199:         </dependency>
+200:         <!-- Import the JSF API, we use provided scope as the API is included in
+201:         JBoss EAP -->
+202:         <dependency>
+203:             <groupId>jakarta.faces</groupId>
+204:             <artifactId>jakarta.faces-api</artifactId>
+205:             <scope>provided</scope>
+206:         </dependency>
+207:         <!-- Import the JAX-RS API, we use provided scope as the API is included
+208:         in JBoss EAP -->
+209:         <dependency>
+210:             <groupId>jakarta.ws.rs</groupId>
+211:             <artifactId>jakarta.ws.rs-api</artifactId>
+212:             <scope>provided</scope>
+213:         </dependency>
+214:         <dependency>
+215:             <groupId>jakarta.xml.bind</groupId>
+216:             <artifactId>jakarta.xml.bind-api</artifactId>
+217:             <scope>provided</scope>
+218:         </dependency>
+219:         <dependency>
+220:             <groupId>jakarta.json</groupId>
+221:             <artifactId>jakarta.json-api</artifactId>
+222:             <scope>test</scope>
+223:         </dependency>
+224:         <dependency>
+225:             <groupId>org.eclipse.parsson</groupId>
+226:             <artifactId>parsson</artifactId>
+227:             <scope>test</scope>
+228:         </dependency>
+229:     </dependencies>
+230:     <profiles>
+231:         <profile>
+232:             <!-- An optional Arquillian testing profile that executes tests in a remote JBoss EAP instance.
+233:             Run with: mvn clean verify -Parq-remote -->
+234:             <id>arq-remote</id>
+235:             <dependencies>
+236:                 <dependency>
+237:                     <groupId>org.wildfly.arquillian</groupId>
+238:                     <artifactId>wildfly-arquillian-container-remote</artifactId>
+239:                     <scope>test</scope>
+240:                 </dependency>
+241:             </dependencies>
+242:             <build>
+243:                 <plugins>
+244:                     <plugin>
+245:                         <groupId>org.apache.maven.plugins</groupId>
+246:                         <artifactId>maven-failsafe-plugin</artifactId>
+247:                         <version>${version.failsafe.plugin}</version>
+248:                         <configuration>
+249:                             <includes>
+250:                                 <include>**/RemoteMemberRegistrationIT</include>
+251:                             </includes>
+252:                             <excludes>
+253:                                 <exclude>**/MemberRegistrationIT</exclude>
+254:                             </excludes>
+255:                         </configuration>
+256:                         <executions>
+257:                             <execution>
+258:                                 <goals>
+259:                                     <goal>integration-test</goal>
+260:                                     <goal>verify</goal>
+261:                                 </goals>
+262:                             </execution>
+263:                         </executions>
+264:                     </plugin>
+265:                 </plugins>
+266:             </build>
+267:         </profile>
+268:         <profile>
+269:             <id>openshift</id>
+270:             <build>
+271:                 <plugins>
+272:                     <plugin>
+273:                         <groupId>org.jboss.eap.plugins</groupId>
+274:                         <artifactId>eap-maven-plugin</artifactId>
+275:                         <version>${version.eap.maven.plugin}</version>
+276:                         <configuration>
+277:                             <channels>
+278:                                 <channel>
+279:                                     <manifest>
+280:                                         <groupId>org.jboss.eap.channels</groupId>
+281:                                         <artifactId>eap-8.0</artifactId>
+282:                                     </manifest>
+283:                                 </channel>
+284:                             </channels>
+285:                             <feature-packs>
+286:                                 <feature-pack>
+287:                                     <location>org.jboss.eap:wildfly-ee-galleon-pack</location>
+288:                                 </feature-pack>
+289:                                 <feature-pack>
+290:                                     <location>org.jboss.eap.cloud:eap-cloud-galleon-pack</location>
+291:                                 </feature-pack>
+292:                             </feature-packs>
+293:                             <layers>
+294:                                 <layer>cloud-server</layer>
+295:                                 <layer>h2-driver</layer>
+296:                                 <layer>ejb</layer>
+297:                                 <layer>jsf</layer>
+298:                             </layers>
+299:                             <filename>ROOT.war</filename>
+300:                         </configuration>
+301:                         <executions>
+302:                             <execution>
+303:                                 <goals>
+304:                                     <goal>package</goal>
+305:                                 </goals>
+306:                             </execution>
+307:                         </executions>
+308:                     </plugin>
+309:                 </plugins>
+310:             </build>
+311:         </profile>
+312:     </profiles>
+313: </project>
 ```
 
-## File: README-source.adoc
+## File: legacy/README-source.adoc
 ```
  1: include::../shared-doc/attributes.adoc[]
  2: 
@@ -2678,7 +2499,7 @@ README.html
 60: include::../shared-doc/build-and-run-the-quickstart-with-openshift.adoc[leveloffset=+1]
 ```
 
-## File: README.adoc
+## File: legacy/README.adoc
 ```
   1: ifdef::env-github[]
   2: :artifactId: kitchensink
@@ -3555,7 +3376,7 @@ README.html
 873: :leveloffset!:
 ```
 
-## File: README.html
+## File: legacy/README.html
 ```html
   1: <!DOCTYPE html>
   2: <html lang="en">
@@ -4459,4 +4280,18 @@ README.html
 900: </div>
 901: </body>
 902: </html>
+```
+
+## File: modern/placeholder.txt
+```
+1: placeholder file for git
+```
+
+## File: readme.md
+```markdown
+1: This is the modernisation challenge git repository with the following top level folder-structure:
+2: 
+3: - legacy (contains the legacy code)
+4: - modern (this is the target folder for the modernised quarkus project)
+5: - workflow (here I keep migration blueprints, prompts, repomix files, etc.)
 ```
