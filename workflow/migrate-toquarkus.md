@@ -5,11 +5,13 @@ use the following command to initialize a new quarkus project:
 ```shell script
 mvn io.quarkus.platform:quarkus-maven-plugin:3.19.3:create \
     -DprojectGroupId=org.acme \
-    -DprojectArtifactId=getting-started \
+    -DprojectArtifactId=modern \
     -Dextensions='rest'
-cd getting-started
+cd modern
 ```
 make sure the project is in the ./modern folder.
+
+add 'quarkus.http.port=8081' to the application.properties file to avoid port conflicts with the legacy app.
 
 
 
