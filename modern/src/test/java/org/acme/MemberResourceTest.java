@@ -62,6 +62,35 @@ public class MemberResourceTest {
     }
 
     @Test
+    public void testGetMemberById() {
+        // Create a new member using REST endpoint
+        Member member = new Member();
+        member.setName("John Doe");
+        member.setEmail("john.doe@example.com");
+        member.setPhoneNumber("1234567890");
+
+        String location = given()
+            .contentType("application/json")
+            .body(member)
+            .when().post("/members")
+            .then()
+            .statusCode(201)
+            .extract().header("Location");
+
+        // Extract the ID from the location header
+        String[] locationParts = location.split("/");
+        String memberId = locationParts[locationParts.length - 1];
+
+        // Retrieve the member by ID and verify the response
+        given()
+            .when().get("/members/" + memberId)
+            .then()
+            .statusCode(200)
+            .body("name", is("John Doe"))
+            .body("email", is("john.doe@example.com"))
+            .body("phoneNumber", is("1234567890"));
+    }
+
     public void testCreateMember() {
         Member member = new Member();
         member.setName("John Doe");
