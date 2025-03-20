@@ -1,7 +1,6 @@
 package org.acme;
 
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.RestAssured;
 import org.acme.entity.Member;
 import org.junit.jupiter.api.Test;
 
@@ -17,16 +16,9 @@ public class MemberResourceTest {
     @Inject
     EntityManager entityManager;
 
-    @Transactional
-    void clearDatabase() {
-        entityManager.createQuery("DELETE FROM Member").executeUpdate();
-    }
-
     @Test
     @Transactional
     public void testListAllMembers() {
-        clearDatabase();
-
         // Add test users
         Member member1 = new Member();
         member1.setName("Alice");
