@@ -26,6 +26,10 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-rest-jackson</artifactId>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
