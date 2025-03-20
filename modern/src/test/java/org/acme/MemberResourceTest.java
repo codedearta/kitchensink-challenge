@@ -25,11 +25,30 @@ public class MemberResourceTest {
     @Test
     public void testListAllMembers() {
         clearDatabase();
+        clearDatabase();
+
+        // Add test users
+        Member member1 = new Member();
+        member1.setName("Alice");
+        member1.setEmail("alice@example.com");
+        member1.setPhoneNumber("1111111111");
+        entityManager.persist(member1);
+
+        Member member2 = new Member();
+        member2.setName("Bob");
+        member2.setEmail("bob@example.com");
+        member2.setPhoneNumber("2222222222");
+        entityManager.persist(member2);
+
+        entityManager.flush();
+
+        // Verify the list of members
         given()
             .when().get("/members")
             .then()
             .statusCode(200)
-            .body(is("[]")); // Assuming no members exist initially
+            .body(containsString("Alice"))
+            .body(containsString("Bob"));
     }
 
     @Test
