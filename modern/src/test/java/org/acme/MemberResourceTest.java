@@ -17,22 +17,31 @@ public class MemberResourceTest {
     EntityManager entityManager;
 
     @Test
-    @Transactional
     public void testListAllMembers() {
-        // Add test users
+        // Add test users using REST endpoints
         Member member1 = new Member();
         member1.setName("Alice");
         member1.setEmail("alice@example.com");
         member1.setPhoneNumber("1111111111");
-        entityManager.persist(member1);
+
+        given()
+            .contentType("application/json")
+            .body(member1)
+            .when().post("/members")
+            .then()
+            .statusCode(201);
 
         Member member2 = new Member();
         member2.setName("Bob");
         member2.setEmail("bob@example.com");
         member2.setPhoneNumber("2222222222");
-        entityManager.persist(member2);
 
-        entityManager.flush();
+        given()
+            .contentType("application/json")
+            .body(member2)
+            .when().post("/members")
+            .then()
+            .statusCode(201);
 
         // Verify the list of members
         given()
