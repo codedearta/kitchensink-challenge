@@ -6,13 +6,25 @@ import org.acme.entity.Member;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import static org.hamcrest.Matchers.*;
 
 @QuarkusTest
 public class MemberResourceTest {
 
+    @Inject
+    EntityManager entityManager;
+
+    @Transactional
+    void clearDatabase() {
+        entityManager.createQuery("DELETE FROM Member").executeUpdate();
+    }
+
     @Test
     public void testListAllMembers() {
+        clearDatabase();
         given()
             .when().get("/members")
             .then()
