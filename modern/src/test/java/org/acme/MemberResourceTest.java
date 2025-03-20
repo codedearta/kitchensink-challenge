@@ -23,6 +23,7 @@ public class MemberResourceTest {
     }
 
     @Test
+    @Transactional
     public void testListAllMembers() {
         clearDatabase();
 
