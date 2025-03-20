@@ -49,7 +49,7 @@ Phase 2: Migrate Core Features
 
                                                                             Step 3: Migrate the Member Entity                                                                            
 
-1 Copy the Member entity from the legacy project.                                                                                                                                       
+1 Copy the Member entity from the legacy project to teh modern projec                                                                                                                                       
 2 Update annotations to use Quarkus JPA standards.                                                                                                                                      
 3 Write a test to verify the entity can be persisted and retrieved.
 
@@ -141,6 +141,7 @@ Copy the `Member` entity from the legacy project into the Quarkus project. Updat
 ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 Prompt 4: Migrate the MemberRepository
 
+base project folder ./modern
 
 Create a repository interface for the `Member` entity using Quarkus Panache. Implement methods for:
 1. Finding a member by ID.
@@ -150,8 +151,7 @@ Create a repository interface for the `Member` entity using Quarkus Panache. Imp
 
 
 ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-Prompt 5: Migrate the REST API
-
+Prompt 5: Migrate the REST API defined in ./legacy/src/main/java/org/jboss/as/quickstarts/kitchensink/rest/MemberResourceRESTService.java to the quarkus project in the ./modern folder
 
 Create a REST resource for the `Member` entity using Quarkus RESTEasy. Implement the following endpoints:
 1. `GET /members` - List all members.

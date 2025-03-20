@@ -15,9 +15,12 @@ Add application.properties to configure application settings
 Add JPA TestEntity, and test for H2 database
 Add application.properties to configure application settings 
 
-3. Replace H2 with oracle database (I had some issues with h2 not seeing the data in the database)
+3. Replace H2 with postgres database (I had some issues with h2 not seeing the data in the database)
 This involved adding testcontainers to the project and setting up the oracle container in the test.
 I use ChatGPT for this task to guide me through hte changes: Here the Testfile that I would like to run against oracle with thestcontainers instead of H2: <the testclass>
 - update the pom to add additional dependencies
-- 
+- updated teh application properties to use quarkus devservices
+Result: Datya is still not visible :-(
+
+
 

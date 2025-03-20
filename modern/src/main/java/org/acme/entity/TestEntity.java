@@ -3,7 +3,6 @@ package org.acme.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "PUBLIC")
 public class TestEntity {
 
     @Id

@@ -23,6 +23,7 @@ public class TestEntityPersistenceTest {
         TestEntity entity = new TestEntity();
         entity.setName("Test Name");
         entityManager.persist(entity);
+        entityManager.flush();
 
         // Retrieve the entity by ID
         TestEntity retrievedEntity = entityManager.find(TestEntity.class, entity.getId());

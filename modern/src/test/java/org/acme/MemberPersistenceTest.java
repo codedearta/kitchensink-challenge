@@ -1,5 +1,6 @@
 package org.acme;
 
+import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
@@ -17,7 +18,7 @@ public class MemberPersistenceTest {
     EntityManager entityManager;
 
     @Test
-    @Transactional
+    @TestTransaction
     public void testPersistAndRetrieveMember() {
         // Create and persist a new Member
         Member member = new Member();
@@ -26,6 +27,7 @@ public class MemberPersistenceTest {
         member.setPhoneNumber("1234567890");
         entityManager.persist(member);
         entityManager.flush();
+        entityManager.clear();
 
         // Retrieve the member by ID
         Member retrievedMember = entityManager.find(Member.class, member.getId());

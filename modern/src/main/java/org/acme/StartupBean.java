@@ -18,7 +18,11 @@ public class StartupBean {
 
     @Transactional
     public void onStart(@Observes StartupEvent ev) {
-        List<Object[]> tables = entityManager.createNativeQuery("SHOW TABLES").getResultList();
-        tables.forEach(row -> System.out.println("TABLE: " + Arrays.toString(row)));
+        List<Object[]> tables = entityManager.createNativeQuery("SELECT table_name \n" +
+                "FROM information_schema.tables \n" +
+                "WHERE table_schema = 'public' \n" +
+                "ORDER BY table_name").getResultList();
+        System.out.println("Tables: " + tables.size());
+        System.out.println("Tables: " + tables);
     }
 }
