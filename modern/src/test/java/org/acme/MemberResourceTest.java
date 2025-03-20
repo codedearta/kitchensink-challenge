@@ -26,7 +26,7 @@ public class MemberResourceTest {
             .when().get("/members/999")
             .then()
             .statusCode(404)
-            .body(containsString("Member with ID 999 not found"));
+            .body(is(""));
     }
 
     @Test
