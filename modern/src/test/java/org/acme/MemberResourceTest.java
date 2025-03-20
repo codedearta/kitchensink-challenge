@@ -25,7 +25,6 @@ public class MemberResourceTest {
     @Test
     public void testListAllMembers() {
         clearDatabase();
-        clearDatabase();
 
         // Add test users
         Member member1 = new Member();
